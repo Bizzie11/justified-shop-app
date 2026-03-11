@@ -946,7 +946,7 @@ function DashboardPreview() {
               </div>
             </div>
 
-            <div className="mt-5 rounded-3xl border border-white/10 bg-white/5 px-5 py-4">
+            <div className="mt-5 rounded-3xl border border-white/10 bg-white/5 px-4 py-3">
               <div className="flex items-center gap-3">
                 <Search className="h-5 w-5 text-slate-500" />
                 <input
@@ -970,6 +970,13 @@ function DashboardPreview() {
                     <X className="h-4 w-4" />
                   </button>
                 ) : null}
+                <button
+                  onClick={openSelected}
+                  className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/10 transition hover:bg-emerald-300"
+                  type="button"
+                >
+                  Search
+                </button>
               </div>
             </div>
 
