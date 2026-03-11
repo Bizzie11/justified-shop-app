@@ -24,7 +24,7 @@ const DEFAULT_PRESETS = [
   {
     id: "ebay",
     name: "eBay",
-    label: "eBay style lookup",
+    label: "eBay sold/comparable items lookup",
     replaceTemplate: "Search eBay sold/comparable items for: {query}",
   },
   {
@@ -62,6 +62,7 @@ function HomePage() {
       return [];
     }
   });
+
   const [savedPresets, setSavedPresets] = useState(() => {
     try {
       const saved = localStorage.getItem("justified-shop-presets");
@@ -70,6 +71,7 @@ function HomePage() {
       return DEFAULT_PRESETS;
     }
   });
+
   const [resultText, setResultText] = useState("");
   const [copied, setCopied] = useState(false);
 
@@ -122,6 +124,7 @@ function HomePage() {
 
   const handleCopyResult = async () => {
     if (!resultText) return;
+
     try {
       await navigator.clipboard.writeText(resultText);
       setCopied(true);
@@ -167,6 +170,7 @@ function HomePage() {
 
   const handleDeletePreset = (presetId) => {
     const defaults = DEFAULT_PRESETS.map((p) => p.id);
+
     if (defaults.includes(presetId)) {
       window.alert("Default presets cannot be deleted.");
       return;
@@ -203,7 +207,9 @@ function HomePage() {
               <div className="mt-8 flex flex-wrap gap-3">
                 <button
                   type="button"
-                  onClick={() => document.getElementById("workspace")?.scrollIntoView({ behavior: "smooth" })}
+                  onClick={() =>
+                    document.getElementById("workspace")?.scrollIntoView({ behavior: "smooth" })
+                  }
                   className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
                 >
                   Open workspace
@@ -252,6 +258,7 @@ function HomePage() {
                   >
                     Search
                   </button>
+
                   <button
                     type="button"
                     onClick={() => setActiveTab("results")}
@@ -263,6 +270,7 @@ function HomePage() {
                   >
                     Results
                   </button>
+
                   <button
                     type="button"
                     onClick={() => setActiveTab("presets")}
@@ -288,7 +296,7 @@ function HomePage() {
                           value={query}
                           onChange={(e) => setQuery(e.target.value)}
                           placeholder="Type a product, part, or replacement item"
-                          className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none ring-0 transition focus:border-slate-500"
+                          className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-500"
                         />
                       </div>
 
@@ -316,7 +324,7 @@ function HomePage() {
                         <p className="text-sm text-slate-600">
                           {query.trim()
                             ? builtPrompt
-                            : 'Your generated prompt will appear here once you enter a search.'}
+                            : "Your generated prompt will appear here once you enter a search."}
                         </p>
                       </div>
 
@@ -328,6 +336,7 @@ function HomePage() {
                         >
                           Run search
                         </button>
+
                         <button
                           type="button"
                           onClick={handleReset}
@@ -342,6 +351,7 @@ function HomePage() {
                           <p className="mb-3 text-sm font-semibold text-slate-700">
                             Recent searches
                           </p>
+
                           <div className="flex flex-wrap gap-2">
                             {recentSearches.map((item) => (
                               <button
@@ -365,6 +375,7 @@ function HomePage() {
                         <p className="mb-2 text-sm font-semibold text-slate-700">
                           Generated output
                         </p>
+
                         <pre className="whitespace-pre-wrap break-words text-sm text-slate-700">
                           {resultText || "No result yet. Run a search from the Search tab."}
                         </pre>
@@ -378,6 +389,7 @@ function HomePage() {
                         >
                           {copied ? "Copied" : "Copy result"}
                         </button>
+
                         <button
                           type="button"
                           onClick={() => setActiveTab("search")}
@@ -465,7 +477,7 @@ function HomePage() {
 
 function Header() {
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <header className="border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link to="/" className="text-lg font-bold tracking-tight text-slate-900">
           Justified Shop
@@ -585,7 +597,6 @@ function PricingSection() {
 function BillingPage() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-
   const checkoutStatus = params.get("checkout");
 
   return (
