@@ -973,9 +973,7 @@ function DashboardPreview() {
               </div>
             </div>
 
-            <div className="mt-3 text-sm text-slate-400">
-              Cleaned search term: <span className="text-slate-200">{cleanedTerm || "—"}</span>
-            </div>
+            
 
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <div>
