@@ -213,9 +213,15 @@ function buildUrls(term, siteNames) {
 }
 
 function openUrlsInTabs(urls) {
-  urls.forEach((item) => {
-    window.open(item.url, "_blank", "noopener,noreferrer");
-  });
+  return urls
+    .map((item) => {
+      try {
+        return window.open(item.url, "_blank");
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
 }
 
 function LogoMark() {
@@ -852,15 +858,7 @@ function DashboardPreview() {
     }
 
     const urls = buildUrls(cleanedTerm, siteNames);
-    const newTabs = urls
-      .map((item) => {
-        try {
-          return window.open(item.url, "_blank", "noopener,noreferrer");
-        } catch {
-          return null;
-        }
-      })
-      .filter(Boolean);
+    const newTabs = openUrlsInTabs(urls);
 
     setOpenedSearchWindows(newTabs);
     setRecentSearches((current) => [cleanedTerm, ...current.filter((item) => item !== cleanedTerm)].slice(0, 8));
