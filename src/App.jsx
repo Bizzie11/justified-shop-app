@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Search,
   ChevronDown,
@@ -11,7 +11,19 @@ import {
   CreditCard,
   Menu,
   X,
+  Settings2,
+  Trash2,
+  Pencil,
+  Star,
+  Save,
 } from "lucide-react";
+
+const STORAGE_KEYS = {
+  presets: "justifiedshop.presets",
+  selectedPresetId: "justifiedshop.selectedPresetId",
+  selectedSites: "justifiedshop.selectedSites",
+  recentSearches: "justifiedshop.recentSearches",
+};
 
 const SITE_CONFIG = [
   {
@@ -54,16 +66,38 @@ const SITE_CONFIG = [
 
 const FREE_SITE_NAMES = SITE_CONFIG.filter((site) => site.free).map((site) => site.name);
 
-const presetMap = {
-  "Amazon + eBay Sold + Walmart": ["Amazon", "eBay Sold", "Walmart"],
-  Hardware: ["Amazon", "Home Depot", "Lowe's", "Google"],
-  Plumbing: ["Amazon", "Walmart", "Home Depot", "Google"],
-  Wholesale: ["Amazon", "Walmart", "eBay", "Google"],
-};
+const DEFAULT_PRESETS = [
+  {
+    id: "preset-arbitrage",
+    name: "Amazon + eBay Sold + Walmart",
+    sites: ["Amazon", "eBay Sold", "Walmart"],
+    isDefault: true,
+    isSystem: true,
+  },
+  {
+    id: "preset-hardware",
+    name: "Hardware",
+    sites: ["Amazon", "Home Depot", "Lowe's", "Google"],
+    isDefault: false,
+    isSystem: true,
+  },
+  {
+    id: "preset-plumbing",
+    name: "Plumbing",
+    sites: ["Amazon", "Walmart", "Home Depot", "Google"],
+    isDefault: false,
+    isSystem: true,
+  },
+  {
+    id: "preset-wholesale",
+    name: "Wholesale",
+    sites: ["Amazon", "Walmart", "eBay", "Google"],
+    isDefault: false,
+    isSystem: true,
+  },
+];
 
-const presetNames = Object.keys(presetMap);
-
-const recent = [
+const DEFAULT_RECENT = [
   "Milwaukee hole saw kit 49-22-5605",
   "Delta RP19804 cartridge",
   "Ridgid shop vac filter",
@@ -97,6 +131,63 @@ const pricing = [
 
 function cn(...classes) {
   return classes.filter(Boolean).join(" ");
+}
+
+function readStorage(key, fallback) {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeStorage(key, value) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // ignore storage errors
+  }
+}
+
+function createPresetId() {
+  return `preset-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function normalizePresets(input) {
+  if (!Array.isArray(input) || input.length === 0) return DEFAULT_PRESETS;
+
+  const next = input
+    .filter((item) => item && typeof item.name === "string" && Array.isArray(item.sites))
+    .map((item) => ({
+      id: item.id || createPresetId(),
+      name: item.name.trim() || "Untitled Preset",
+      sites: item.sites.filter(Boolean),
+      isDefault: Boolean(item.isDefault),
+      isSystem: Boolean(item.isSystem),
+    }));
+
+  if (next.length === 0) return DEFAULT_PRESETS;
+  if (next.some((item) => item.isDefault)) return next;
+
+  return next.map((item, index) => ({
+    ...item,
+    isDefault: index === 0,
+  }));
+}
+
+function getDefaultPresetId(presets) {
+  return presets.find((preset) => preset.isDefault)?.id || presets[0]?.id || "";
+}
+
+function getPresetById(presets, presetId) {
+  return presets.find((preset) => preset.id === presetId) || null;
+}
+
+function mergeSelectedPresetId(savedId, presets) {
+  return presets.some((preset) => preset.id === savedId) ? savedId : getDefaultPresetId(presets);
 }
 
 function cleanSearchTerm(value, searchType) {
@@ -180,6 +271,290 @@ function SiteCard({ name, selected, onClick, locked }) {
   );
 }
 
+function PresetManagerModal({
+  open,
+  onClose,
+  presets,
+  selectedPresetId,
+  selectedSites,
+  setSelectedPresetId,
+  setSelectedSites,
+  setPresets,
+  showToast,
+}) {
+  const [draftId, setDraftId] = useState("");
+  const [draftName, setDraftName] = useState("");
+  const [draftSites, setDraftSites] = useState([]);
+
+  useEffect(() => {
+    if (!open) return;
+    setDraftId("");
+    setDraftName("");
+    setDraftSites([...selectedSites]);
+  }, [open, selectedSites]);
+
+  if (!open) return null;
+
+  const resetDraft = () => {
+    setDraftId("");
+    setDraftName("");
+    setDraftSites([...selectedSites]);
+  };
+
+  const editPreset = (preset) => {
+    setDraftId(preset.id);
+    setDraftName(preset.name);
+    setDraftSites([...preset.sites]);
+  };
+
+  const toggleDraftSite = (site) => {
+    const locked = !site.free;
+    if (locked) {
+      showToast("eBay Sold stays part of the future paid plan.");
+      return;
+    }
+
+    setDraftSites((current) =>
+      current.includes(site.name)
+        ? current.filter((item) => item !== site.name)
+        : [...current, site.name]
+    );
+  };
+
+  const savePreset = () => {
+    const name = draftName.trim();
+    const sites = draftSites.filter(Boolean);
+
+    if (!name) return showToast("Give your preset a name.");
+    if (!sites.length) return showToast("Choose at least one marketplace.");
+
+    if (draftId) {
+      setPresets((current) =>
+        current.map((preset) =>
+          preset.id === draftId ? { ...preset, name, sites } : preset
+        )
+      );
+
+      if (selectedPresetId === draftId) {
+        setSelectedSites(sites);
+      }
+
+      showToast("Preset updated.");
+    } else {
+      const nextPreset = {
+        id: createPresetId(),
+        name,
+        sites,
+        isDefault: false,
+        isSystem: false,
+      };
+      setPresets((current) => [...current, nextPreset]);
+      showToast("Preset saved.");
+    }
+
+    resetDraft();
+  };
+
+  const applyPreset = (preset) => {
+    setSelectedPresetId(preset.id);
+    setSelectedSites([...preset.sites]);
+    showToast(`${preset.name} applied.`);
+    onClose();
+  };
+
+  const setDefaultPreset = (presetId) => {
+    setPresets((current) =>
+      current.map((preset) => ({
+        ...preset,
+        isDefault: preset.id === presetId,
+      }))
+    );
+    showToast("Default preset updated.");
+  };
+
+  const deletePreset = (presetId) => {
+    const target = getPresetById(presets, presetId);
+    if (!target || target.isSystem) return;
+
+    const nextRaw = presets.filter((preset) => preset.id !== presetId);
+    const next = target.isDefault
+      ? nextRaw.map((preset, index) => ({
+          ...preset,
+          isDefault: index === 0,
+        }))
+      : nextRaw;
+
+    setPresets(next);
+
+    if (selectedPresetId === presetId) {
+      const fallbackId = getDefaultPresetId(next);
+      const fallbackPreset = getPresetById(next, fallbackId);
+      setSelectedPresetId(fallbackId);
+      setSelectedSites(fallbackPreset?.sites || []);
+    }
+
+    if (draftId === presetId) resetDraft();
+    showToast("Preset deleted.");
+  };
+
+  const applyDraftToDashboard = () => {
+    if (!draftSites.length) return showToast("Choose at least one marketplace.");
+    setSelectedSites(draftSites);
+    showToast("Draft applied to dashboard.");
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-5xl rounded-[32px] border border-white/10 bg-slate-900 p-5 shadow-2xl shadow-black/40 md:p-6">
+        <div className="mb-5 flex items-start justify-between gap-4">
+          <div>
+            <p className="text-sm text-slate-400">Preset manager</p>
+            <h3 className="mt-1 text-2xl font-semibold text-white">Manage presets</h3>
+            <p className="mt-2 text-sm text-slate-300">
+              Create custom presets, set a default, and keep the dashboard cleaner.
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded-2xl border border-white/10 bg-white/5 p-3 text-slate-300"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
+          <div className="rounded-[28px] border border-white/10 bg-slate-950 p-5">
+            <div className="flex items-center justify-between gap-3">
+              <h4 className="text-lg font-semibold text-white">
+                {draftId ? "Edit preset" : "Create custom preset"}
+              </h4>
+              {draftId ? (
+                <button onClick={resetDraft} className="text-sm text-slate-400 hover:text-white">
+                  Cancel edit
+                </button>
+              ) : null}
+            </div>
+
+            <div className="mt-4">
+              <label className="mb-2 block text-sm text-slate-400">Preset name</label>
+              <input
+                value={draftName}
+                onChange={(e) => setDraftName(e.target.value)}
+                placeholder="Example: Wholesale Quick Check"
+                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-slate-500"
+              />
+            </div>
+
+            <div className="mt-4">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <p className="text-sm text-slate-400">Marketplaces</p>
+                <button
+                  onClick={() => setDraftSites([...FREE_SITE_NAMES])}
+                  className="text-sm text-emerald-300 hover:text-emerald-200"
+                >
+                  Select all free
+                </button>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {SITE_CONFIG.map((site) => (
+                  <SiteCard
+                    key={site.name}
+                    name={site.name}
+                    selected={draftSites.includes(site.name)}
+                    locked={!site.free}
+                    onClick={() => toggleDraftSite(site)}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-3">
+              <button
+                onClick={savePreset}
+                className="flex items-center gap-2 rounded-2xl bg-emerald-400 px-4 py-3 font-semibold text-slate-950"
+              >
+                <Save className="h-4 w-4" />
+                {draftId ? "Save Changes" : "Save Preset"}
+              </button>
+              <button
+                onClick={applyDraftToDashboard}
+                className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 font-semibold text-white"
+              >
+                Apply to Dashboard
+              </button>
+            </div>
+          </div>
+
+          <div className="rounded-[28px] border border-white/10 bg-slate-950 p-5">
+            <div className="flex items-center justify-between gap-3">
+              <h4 className="text-lg font-semibold text-white">Saved presets</h4>
+              <span className="text-sm text-slate-400">{presets.length} total</span>
+            </div>
+
+            <div className="mt-4 space-y-3">
+              {presets.map((preset) => (
+                <div
+                  key={preset.id}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-4"
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-medium text-white">{preset.name}</p>
+                    {preset.isDefault ? (
+                      <span className="rounded-full bg-emerald-400 px-2.5 py-1 text-[11px] font-semibold text-slate-950">
+                        Default
+                      </span>
+                    ) : null}
+                    {preset.isSystem ? (
+                      <span className="rounded-full border border-white/10 bg-slate-900 px-2.5 py-1 text-[11px] text-slate-300">
+                        System
+                      </span>
+                    ) : null}
+                    {selectedPresetId === preset.id ? (
+                      <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[11px] text-emerald-300">
+                        Active
+                      </span>
+                    ) : null}
+                  </div>
+                  <p className="mt-2 text-sm text-slate-400">{preset.sites.join(", ")}</p>
+
+                  <div className="mt-4 flex flex-wrap gap-4 text-sm">
+                    <button
+                      onClick={() => applyPreset(preset)}
+                      className="font-medium text-emerald-300 hover:text-emerald-200"
+                    >
+                      Apply
+                    </button>
+                    <button
+                      onClick={() => editPreset(preset)}
+                      className="inline-flex items-center gap-1 font-medium text-slate-300 hover:text-white"
+                    >
+                      <Pencil className="h-3.5 w-3.5" /> Edit
+                    </button>
+                    <button
+                      onClick={() => setDefaultPreset(preset.id)}
+                      className="inline-flex items-center gap-1 font-medium text-slate-300 hover:text-white"
+                    >
+                      <Star className="h-3.5 w-3.5" /> Set Default
+                    </button>
+                    {!preset.isSystem ? (
+                      <button
+                        onClick={() => deletePreset(preset.id)}
+                        className="inline-flex items-center gap-1 font-medium text-red-300 hover:text-red-200"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" /> Delete
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Nav() {
   const [open, setOpen] = useState(false);
 
@@ -239,7 +614,7 @@ function Hero() {
       <div className="relative mx-auto grid max-w-7xl gap-12 px-6 py-16 md:px-10 md:py-24 lg:grid-cols-2 lg:items-center">
         <div>
           <div className="inline-flex rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-1 text-sm text-emerald-300">
-            Built for Amazon, Walmart, and eBay sellers
+            Built for arbitrage sellers and wholesale sellers
           </div>
           <h1 className="mt-6 max-w-2xl text-4xl font-bold tracking-tight text-white md:text-6xl">
             Search Once. Check Every Marketplace.
@@ -249,7 +624,7 @@ function Hero() {
           </p>
           <p className="mt-4 max-w-xl text-base leading-7 text-slate-300">
             Instantly open product searches across Amazon, Walmart, eBay, eBay Sold,
-            Home Depot, Lowe's, Google, and more from one clean workflow built for
+            Home Depot, Lowe&apos;s, Google, and more from one clean workflow built for
             resellers.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
@@ -294,7 +669,7 @@ function Hero() {
                 Exact Search
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-slate-300">
-                Amazon + eBay Sold + Walmart
+                Clean preset dropdown
               </div>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
@@ -312,7 +687,7 @@ function Hero() {
                 Open Selected Sites
               </button>
               <button className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 font-semibold text-white">
-                Copy Search Term
+                Save Preset
               </button>
             </div>
           </div>
@@ -358,15 +733,42 @@ function Features() {
 }
 
 function DashboardPreview() {
+  const initialPresets = useMemo(
+    () => normalizePresets(readStorage(STORAGE_KEYS.presets, DEFAULT_PRESETS)),
+    []
+  );
+
   const [search, setSearch] = useState("Milwaukee hole saw kit 49-22-5605");
   const [searchType, setSearchType] = useState("Exact");
-  const [selectedPreset, setSelectedPreset] = useState(presetNames[0]);
-  const [selectedSites, setSelectedSites] = useState([...presetMap[presetNames[0]]]);
+  const [presets, setPresets] = useState(initialPresets);
+  const [selectedPresetId, setSelectedPresetId] = useState(() =>
+    mergeSelectedPresetId(readStorage(STORAGE_KEYS.selectedPresetId, ""), initialPresets)
+  );
+  const [selectedSites, setSelectedSites] = useState(() => {
+    const saved = readStorage(STORAGE_KEYS.selectedSites, null);
+    if (Array.isArray(saved) && saved.length > 0) return saved;
+    const activePresetId = mergeSelectedPresetId(
+      readStorage(STORAGE_KEYS.selectedPresetId, ""),
+      initialPresets
+    );
+    return getPresetById(initialPresets, activePresetId)?.sites || [];
+  });
+  const [recentSearches, setRecentSearches] = useState(() => {
+    const saved = readStorage(STORAGE_KEYS.recentSearches, null);
+    return Array.isArray(saved) && saved.length ? saved.slice(0, 8) : DEFAULT_RECENT;
+  });
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [showPresetManager, setShowPresetManager] = useState(false);
+  const [replaceOpenTabs, setReplaceOpenTabs] = useState(true);
+  const [openedSearchWindows, setOpenedSearchWindows] = useState([]);
   const [toast, setToast] = useState("");
 
   const selectedCount = useMemo(() => selectedSites.length, [selectedSites]);
   const cleanedTerm = useMemo(() => cleanSearchTerm(search, searchType), [search, searchType]);
+  const selectedPreset = useMemo(
+    () => getPresetById(presets, selectedPresetId),
+    [presets, selectedPresetId]
+  );
 
   const showToast = (message) => {
     setToast(message);
@@ -374,11 +776,54 @@ function DashboardPreview() {
     showToast.timeoutId = window.setTimeout(() => setToast(""), 2200);
   };
 
-  const handlePresetSelect = () => {
-    const nextIndex = (presetNames.indexOf(selectedPreset) + 1) % presetNames.length;
-    const nextPreset = presetNames[nextIndex];
-    setSelectedPreset(nextPreset);
-    setSelectedSites([...presetMap[nextPreset]]);
+  useEffect(() => {
+    writeStorage(STORAGE_KEYS.presets, presets);
+  }, [presets]);
+
+  useEffect(() => {
+    writeStorage(STORAGE_KEYS.selectedPresetId, selectedPresetId);
+  }, [selectedPresetId]);
+
+  useEffect(() => {
+    writeStorage(STORAGE_KEYS.selectedSites, selectedSites);
+  }, [selectedSites]);
+
+  useEffect(() => {
+    writeStorage(STORAGE_KEYS.recentSearches, recentSearches);
+  }, [recentSearches]);
+
+  useEffect(() => {
+    const mergedId = mergeSelectedPresetId(selectedPresetId, presets);
+    if (mergedId !== selectedPresetId) {
+      setSelectedPresetId(mergedId);
+      setSelectedSites(getPresetById(presets, mergedId)?.sites || []);
+    }
+  }, [presets, selectedPresetId]);
+
+  const closeTrackedTabs = () => {
+    if (!openedSearchWindows.length) return 0;
+
+    let closedCount = 0;
+    openedSearchWindows.forEach((tab) => {
+      try {
+        if (tab && !tab.closed) {
+          tab.close();
+          closedCount += 1;
+        }
+      } catch {
+        // ignore browser tab close issues
+      }
+    });
+
+    setOpenedSearchWindows([]);
+    return closedCount;
+  };
+
+  const handlePresetChange = (event) => {
+    const nextPreset = getPresetById(presets, event.target.value);
+    if (!nextPreset) return;
+    setSelectedPresetId(nextPreset.id);
+    setSelectedSites([...nextPreset.sites]);
   };
 
   const toggleSite = (site) => {
@@ -386,6 +831,7 @@ function DashboardPreview() {
       setShowUpgrade(true);
       return;
     }
+
     setSelectedSites((current) =>
       current.includes(site.name)
         ? current.filter((item) => item !== site.name)
@@ -396,17 +842,56 @@ function DashboardPreview() {
   const selectAllFree = () => setSelectedSites([...FREE_SITE_NAMES]);
   const clearAll = () => setSelectedSites([]);
 
-  const openSelected = () => {
+  const openSearchUrls = (siteNames, successMessage) => {
     if (!cleanedTerm) return showToast("Enter a search term first.");
-    if (!selectedSites.length) return showToast("Choose at least one site.");
-    openUrlsInTabs(buildUrls(cleanedTerm, selectedSites));
-    showToast(`Opened ${selectedSites.length} site${selectedSites.length === 1 ? "" : "s"}.`);
+    if (!siteNames.length) return showToast("Choose at least one site.");
+
+    let replacedCount = 0;
+    if (replaceOpenTabs) {
+      replacedCount = closeTrackedTabs();
+    }
+
+    const urls = buildUrls(cleanedTerm, siteNames);
+    const newTabs = urls
+      .map((item) => {
+        try {
+          return window.open(item.url, "_blank", "noopener,noreferrer");
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean);
+
+    setOpenedSearchWindows(newTabs);
+    setRecentSearches((current) => [cleanedTerm, ...current.filter((item) => item !== cleanedTerm)].slice(0, 8));
+
+    if (!newTabs.length) {
+      showToast("Your browser blocked the tabs. Allow pop-ups for smoother searching.");
+      return;
+    }
+
+    showToast(
+      replacedCount > 0
+        ? `${successMessage} Replaced ${replacedCount} previous tab${replacedCount === 1 ? "" : "s"}.`
+        : successMessage
+    );
+  };
+
+  const openSelected = () => {
+    openSearchUrls(
+      selectedSites,
+      `Opened ${selectedSites.length} site${selectedSites.length === 1 ? "" : "s"}.`
+    );
   };
 
   const openAll = () => {
-    if (!cleanedTerm) return showToast("Enter a search term first.");
-    openUrlsInTabs(buildUrls(cleanedTerm, FREE_SITE_NAMES));
-    showToast(`Opened ${FREE_SITE_NAMES.length} free marketplaces.`);
+    openSearchUrls(FREE_SITE_NAMES, `Opened ${FREE_SITE_NAMES.length} free marketplaces.`);
+  };
+
+  const closeLastSearchTabs = () => {
+    const closedCount = closeTrackedTabs();
+    if (!closedCount) return showToast("No tracked search tabs are open right now.");
+    showToast(`Closed ${closedCount} tab${closedCount === 1 ? "" : "s"}.`);
   };
 
   const copySearchTerm = async () => {
@@ -419,6 +904,10 @@ function DashboardPreview() {
     }
   };
 
+  const saveCurrentAsPreset = () => {
+    setShowPresetManager(true);
+  };
+
   return (
     <section id="dashboard" className="border-y border-white/10 bg-white/5">
       <div className="mx-auto max-w-7xl px-6 py-20 md:px-10">
@@ -429,8 +918,8 @@ function DashboardPreview() {
         />
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
-          <div className="rounded-[32px] border border-white/10 bg-slate-950 p-6 shadow-2xl shadow-black/30">
-            <div className="flex items-start justify-between gap-4">
+          <div className="rounded-[32px] border border-white/10 bg-slate-950 p-5 shadow-2xl shadow-black/30 md:p-6">
+            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-sm text-slate-400">Search</p>
                 <h3 className="text-2xl font-semibold text-white">Check a product fast</h3>
@@ -480,12 +969,84 @@ function DashboardPreview() {
 
               <div>
                 <p className="mb-2 text-sm text-slate-400">Preset</p>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <select
+                      value={selectedPresetId}
+                      onChange={handlePresetChange}
+                      className="w-full appearance-none rounded-2xl border border-white/10 bg-white/5 px-4 py-3 pr-10 text-sm text-white outline-none"
+                    >
+                      {presets.map((preset) => (
+                        <option key={preset.id} value={preset.id} className="bg-slate-900 text-white">
+                          {preset.name}{preset.isDefault ? " • Default" : ""}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  </div>
+                  <button
+                    onClick={saveCurrentAsPreset}
+                    className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                  >
+                    <Save className="h-4 w-4" />
+                    <span className="hidden sm:inline">Save Preset</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+              <div className="text-sm text-slate-400">
+                Active preset: <span className="text-slate-200">{selectedPreset?.name || "Custom"}</span>
+              </div>
+              <button
+                onClick={() => setShowPresetManager(true)}
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-300 hover:bg-white/10"
+              >
+                <Settings2 className="h-4 w-4" /> Manage Presets
+              </button>
+            </div>
+
+            <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-sm font-medium text-white">Tab handling</p>
+                  <p className="text-sm text-slate-400">
+                    Automatically close the last batch of search tabs before opening a new one.
+                  </p>
+                </div>
+                <label className="inline-flex items-center gap-3 text-sm text-slate-300">
+                  <button
+                    type="button"
+                    onClick={() => setReplaceOpenTabs((value) => !value)}
+                    className={cn(
+                      "relative h-7 w-12 rounded-full border transition",
+                      replaceOpenTabs
+                        ? "border-emerald-400/40 bg-emerald-400/20"
+                        : "border-white/10 bg-slate-900"
+                    )}
+                    aria-pressed={replaceOpenTabs}
+                  >
+                    <span
+                      className={cn(
+                        "absolute top-1 h-5 w-5 rounded-full bg-white transition",
+                        replaceOpenTabs ? "left-6" : "left-1"
+                      )}
+                    />
+                  </button>
+                  <span>{replaceOpenTabs ? "Replace previous tabs" : "Keep tabs open"}</span>
+                </label>
+              </div>
+
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm">
+                <span className="text-slate-400">
+                  Tracked open search tabs: <span className="text-slate-200">{openedSearchWindows.filter((tab) => tab && !tab.closed).length}</span>
+                </span>
                 <button
-                  onClick={handlePresetSelect}
-                  className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white"
+                  onClick={closeLastSearchTabs}
+                  className="rounded-full border border-white/10 bg-slate-900 px-3 py-1.5 text-slate-300 hover:bg-white/10"
                 >
-                  <span>{selectedPreset}</span>
-                  <ChevronDown className="h-4 w-4 text-slate-400" />
+                  Close Last Search Tabs
                 </button>
               </div>
             </div>
@@ -521,7 +1082,7 @@ function DashboardPreview() {
               </div>
             </div>
 
-            <div className="mt-6 grid gap-3 md:grid-cols-3">
+            <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
               <button
                 onClick={openSelected}
                 className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-400 px-5 py-3.5 font-semibold text-slate-950"
@@ -533,6 +1094,12 @@ function DashboardPreview() {
                 className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 font-semibold text-white"
               >
                 Open All
+              </button>
+              <button
+                onClick={closeLastSearchTabs}
+                className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 font-semibold text-white"
+              >
+                Close Last Tabs
               </button>
               <button
                 onClick={copySearchTerm}
@@ -553,7 +1120,7 @@ function DashboardPreview() {
                 <Clock3 className="h-5 w-5 text-slate-500" />
               </div>
               <div className="mt-4 space-y-3">
-                {recent.map((item) => (
+                {recentSearches.map((item) => (
                   <button
                     key={item}
                     onClick={() => setSearch(item)}
@@ -574,17 +1141,17 @@ function DashboardPreview() {
                 <CheckCircle2 className="h-5 w-5 text-emerald-300" />
               </div>
               <div className="mt-4 space-y-3">
-                {presetNames.map((preset) => (
+                {presets.map((preset) => (
                   <button
-                    key={preset}
+                    key={preset.id}
                     onClick={() => {
-                      setSelectedPreset(preset);
-                      setSelectedSites([...presetMap[preset]]);
+                      setSelectedPresetId(preset.id);
+                      setSelectedSites([...preset.sites]);
                     }}
                     className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/10"
                   >
-                    <span>{preset}</span>
-                    <ExternalLink className="h-4 w-4 text-slate-500" />
+                    <span className="truncate pr-3">{preset.name}</span>
+                    <ExternalLink className="h-4 w-4 shrink-0 text-slate-500" />
                   </button>
                 ))}
               </div>
@@ -593,12 +1160,23 @@ function DashboardPreview() {
         </div>
 
         {toast ? (
-          <div className="fixed bottom-6 right-6 rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white shadow-2xl shadow-black/30">
+          <div className="fixed bottom-6 right-6 z-40 rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white shadow-2xl shadow-black/30">
             {toast}
           </div>
         ) : null}
 
         {showUpgrade ? <UpgradeModal onClose={() => setShowUpgrade(false)} /> : null}
+        <PresetManagerModal
+          open={showPresetManager}
+          onClose={() => setShowPresetManager(false)}
+          presets={presets}
+          selectedPresetId={selectedPresetId}
+          selectedSites={selectedSites}
+          setSelectedPresetId={setSelectedPresetId}
+          setSelectedSites={setSelectedSites}
+          setPresets={setPresets}
+          showToast={showToast}
+        />
       </div>
     </section>
   );
