@@ -45,7 +45,9 @@ const SITE_CONFIG = [
     name: "eBay Sold",
     free: false,
     buildUrl: (term) =>
-      `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(term)}&LH_Sold=1&LH_Complete=1`,
+      `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(
+        term
+      )}&LH_Sold=1&LH_Complete=1`,
   },
   {
     name: "Home Depot",
@@ -269,9 +271,10 @@ function SectionTitle({ eyebrow, title, text, center = false }) {
 function SiteCard({ name, selected, onClick, locked }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cn(
-        "rounded-2xl border px-4 py-3 text-left transition duration-150",
+        "rounded-2xl border px-4 py-3 text-left transition duration-150 hover:scale-[1.02]",
         selected
           ? "border-emerald-400/50 bg-emerald-400/10 text-white"
           : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10"
@@ -326,8 +329,7 @@ function PresetManagerModal({
   };
 
   const toggleDraftSite = (site) => {
-    const locked = !site.free;
-    if (locked) {
+    if (!site.free) {
       showToast("eBay Sold stays part of the future paid plan.");
       return;
     }
@@ -348,9 +350,7 @@ function PresetManagerModal({
 
     if (draftId) {
       setPresets((current) =>
-        current.map((preset) =>
-          preset.id === draftId ? { ...preset, name, sites } : preset
-        )
+        current.map((preset) => (preset.id === draftId ? { ...preset, name, sites } : preset))
       );
 
       if (selectedPresetId === draftId) {
@@ -419,6 +419,7 @@ function PresetManagerModal({
     if (!draftSites.length) return showToast("Choose at least one marketplace.");
     setSelectedSites(draftSites);
     showToast("Draft applied to dashboard.");
+    onClose();
   };
 
   return (
@@ -433,6 +434,7 @@ function PresetManagerModal({
             </p>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="rounded-2xl border border-white/10 bg-white/5 p-3 text-slate-300"
           >
@@ -447,7 +449,11 @@ function PresetManagerModal({
                 {draftId ? "Edit preset" : "Create custom preset"}
               </h4>
               {draftId ? (
-                <button onClick={resetDraft} className="text-sm text-slate-400 hover:text-white">
+                <button
+                  type="button"
+                  onClick={resetDraft}
+                  className="text-sm text-slate-400 hover:text-white"
+                >
                   Cancel edit
                 </button>
               ) : null}
@@ -467,6 +473,7 @@ function PresetManagerModal({
               <div className="mb-3 flex items-center justify-between gap-3">
                 <p className="text-sm text-slate-400">Marketplaces</p>
                 <button
+                  type="button"
                   onClick={() => setDraftSites([...FREE_SITE_NAMES])}
                   className="text-sm text-emerald-300 hover:text-emerald-200"
                 >
@@ -488,6 +495,7 @@ function PresetManagerModal({
 
             <div className="mt-5 flex flex-wrap gap-3">
               <button
+                type="button"
                 onClick={savePreset}
                 className="flex items-center gap-2 rounded-2xl bg-emerald-400 px-4 py-3 font-semibold text-slate-950"
               >
@@ -495,6 +503,7 @@ function PresetManagerModal({
                 {draftId ? "Save Changes" : "Save Preset"}
               </button>
               <button
+                type="button"
                 onClick={applyDraftToDashboard}
                 className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 font-semibold text-white"
               >
@@ -533,22 +542,26 @@ function PresetManagerModal({
                       </span>
                     ) : null}
                   </div>
+
                   <p className="mt-2 text-sm text-slate-400">{preset.sites.join(", ")}</p>
 
                   <div className="mt-4 flex flex-wrap gap-4 text-sm">
                     <button
+                      type="button"
                       onClick={() => applyPreset(preset)}
                       className="font-medium text-emerald-300 hover:text-emerald-200"
                     >
                       Apply
                     </button>
                     <button
+                      type="button"
                       onClick={() => editPreset(preset)}
                       className="inline-flex items-center gap-1 font-medium text-slate-300 hover:text-white"
                     >
                       <Pencil className="h-3.5 w-3.5" /> Edit
                     </button>
                     <button
+                      type="button"
                       onClick={() => setDefaultPreset(preset.id)}
                       className="inline-flex items-center gap-1 font-medium text-slate-300 hover:text-white"
                     >
@@ -556,6 +569,7 @@ function PresetManagerModal({
                     </button>
                     {!preset.isSystem ? (
                       <button
+                        type="button"
                         onClick={() => deletePreset(preset.id)}
                         className="inline-flex items-center gap-1 font-medium text-red-300 hover:text-red-200"
                       >
@@ -588,16 +602,28 @@ function Nav() {
         </div>
 
         <nav className="hidden items-center gap-8 text-sm text-slate-300 md:flex">
-          <a href="#features" className="hover:text-white">Features</a>
-          <a href="#dashboard" className="hover:text-white">Dashboard</a>
-          <a href="#pricing" className="hover:text-white">Pricing</a>
-          <a href="#login" className="hover:text-white">Login</a>
-          <a href="#pricing" className="rounded-2xl bg-emerald-400 px-4 py-2 font-semibold text-slate-950">
+          <a href="#features" className="hover:text-white">
+            Features
+          </a>
+          <a href="#dashboard" className="hover:text-white">
+            Dashboard
+          </a>
+          <a href="#pricing" className="hover:text-white">
+            Pricing
+          </a>
+          <a href="#login" className="hover:text-white">
+            Login
+          </a>
+          <a
+            href="#pricing"
+            className="rounded-2xl bg-emerald-400 px-4 py-2 font-semibold text-slate-950"
+          >
             Start Free
           </a>
         </nav>
 
         <button
+          type="button"
           className="rounded-2xl border border-white/10 bg-white/5 p-3 text-slate-300 md:hidden"
           onClick={() => setOpen((v) => !v)}
         >
@@ -684,7 +710,7 @@ function Hero() {
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-slate-300">
-                Exact Search
+                Exact Part #
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-slate-300">
                 Clean preset dropdown
@@ -758,7 +784,7 @@ function DashboardPreview() {
 
   const [search, setSearch] = useState("Milwaukee hole saw kit 49-22-5605");
   const searchInputRef = useRef(null);
-  const [searchType, setSearchType] = useState("Exact");
+  const [searchType, setSearchType] = useState("Exact Part #");
   const [presets, setPresets] = useState(initialPresets);
   const [selectedPresetId, setSelectedPresetId] = useState(() =>
     mergeSelectedPresetId(readStorage(STORAGE_KEYS.selectedPresetId, ""), initialPresets)
@@ -781,6 +807,7 @@ function DashboardPreview() {
   const [replaceOpenTabs, setReplaceOpenTabs] = useState(true);
   const [openedSearchWindows, setOpenedSearchWindows] = useState([]);
   const [toast, setToast] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
 
   const selectedCount = useMemo(() => selectedSites.length, [selectedSites]);
   const cleanedTerm = useMemo(() => cleanSearchTerm(search, searchType), [search, searchType]);
@@ -818,6 +845,10 @@ function DashboardPreview() {
       setSelectedSites(getPresetById(presets, mergedId)?.sites || []);
     }
   }, [presets, selectedPresetId]);
+
+  useEffect(() => {
+    searchInputRef.current?.focus();
+  }, []);
 
   const closeTrackedTabs = () => {
     if (!openedSearchWindows.length) return 0;
@@ -862,8 +893,17 @@ function DashboardPreview() {
   const clearAll = () => setSelectedSites([]);
 
   const openSearchUrls = (siteNames, successMessage) => {
-    if (!cleanedTerm) return showToast("Enter a search term first.");
-    if (!siteNames.length) return showToast("Choose at least one site.");
+    if (!cleanedTerm) {
+      showToast("Enter a search term first.");
+      setIsSearching(false);
+      return;
+    }
+
+    if (!siteNames.length) {
+      showToast("Choose at least one marketplace.");
+      setIsSearching(false);
+      return;
+    }
 
     let replacedCount = 0;
     if (replaceOpenTabs) {
@@ -874,38 +914,55 @@ function DashboardPreview() {
     const newTabs = openUrlsInTabs(urls);
 
     setOpenedSearchWindows(newTabs);
-    setRecentSearches((current) => [cleanedTerm, ...current.filter((item) => item !== cleanedTerm)].slice(0, 8));
+    setRecentSearches((current) =>
+      [cleanedTerm, ...current.filter((item) => item !== cleanedTerm)].slice(0, 8)
+    );
 
     if (!newTabs.length) {
       showToast("Your browser blocked the tabs. Allow pop-ups for smoother searching.");
+      setIsSearching(false);
       return;
     }
 
     showToast(
       replacedCount > 0
-        ? `${successMessage} Replaced ${replacedCount} previous tab${replacedCount === 1 ? "" : "s"}.`
+        ? `${successMessage} Replaced ${replacedCount} previous tab${
+            replacedCount === 1 ? "" : "s"
+          }.`
         : successMessage
     );
   };
 
   const openSelected = () => {
-    openSearchUrls(
-      selectedSites,
-      `Opened ${selectedSites.length} site${selectedSites.length === 1 ? "" : "s"}.`
-    );
-    window.requestAnimationFrame(() => searchInputRef.current?.focus());
+    setIsSearching(true);
+
+    window.setTimeout(() => {
+      openSearchUrls(
+        selectedSites,
+        `Opened ${selectedSites.length} site${selectedSites.length === 1 ? "" : "s"}.`
+      );
+      setSearch("");
+      window.requestAnimationFrame(() => searchInputRef.current?.focus());
+      setIsSearching(false);
+    }, 120);
   };
 
   const openAll = () => {
-    openSearchUrls(FREE_SITE_NAMES, `Opened ${FREE_SITE_NAMES.length} free marketplaces.`);
-    window.requestAnimationFrame(() => searchInputRef.current?.focus());
+    setIsSearching(true);
+
+    window.setTimeout(() => {
+      openSearchUrls(FREE_SITE_NAMES, `Opened ${FREE_SITE_NAMES.length} free marketplaces.`);
+      setSearch("");
+      window.requestAnimationFrame(() => searchInputRef.current?.focus());
+      setIsSearching(false);
+    }, 120);
   };
 
   const closeLastSearchTabs = () => {
     const closedCount = closeTrackedTabs();
     if (!closedCount) {
       window.requestAnimationFrame(() => searchInputRef.current?.focus());
-      return showToast("No tracked search tabs are open right now.");
+      return showToast("No previous search tabs are open right now.");
     }
     showToast(`Closed ${closedCount} tab${closedCount === 1 ? "" : "s"}.`);
     window.requestAnimationFrame(() => searchInputRef.current?.focus());
@@ -925,6 +982,8 @@ function DashboardPreview() {
     setShowPresetManager(true);
   };
 
+  const activeTrackedTabs = openedSearchWindows.filter((tab) => tab && !tab.closed).length;
+
   return (
     <section id="dashboard" className="border-y border-white/10 bg-white/5">
       <div className="mx-auto max-w-7xl px-6 py-20 md:px-10">
@@ -939,7 +998,7 @@ function DashboardPreview() {
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-sm text-slate-400">Search</p>
-                <h3 className="text-2xl font-semibold text-white">Check a product fast</h3>
+                <h3 className="text-2xl font-semibold text-white">Check products instantly</h3>
               </div>
               <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300">
                 {selectedCount} sites selected
@@ -955,32 +1014,32 @@ function DashboardPreview() {
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && openSelected()}
                   className="w-full bg-transparent text-lg text-white outline-none placeholder:text-slate-500"
-                  placeholder="Enter product name, model number, or UPC"
+                  placeholder="Paste product name, model number, or UPC"
                 />
                 {search ? (
                   <button
+                    type="button"
                     onClick={() => {
                       setSearch("");
                       window.requestAnimationFrame(() => searchInputRef.current?.focus());
                     }}
                     className="rounded-full p-1 text-slate-400 transition hover:bg-white/10 hover:text-white"
                     aria-label="Clear search"
-                    type="button"
                   >
                     <X className="h-4 w-4" />
                   </button>
                 ) : null}
                 <button
-                  onClick={openSelected}
-                  className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/10 transition hover:bg-emerald-300"
                   type="button"
+                  onClick={openSelected}
+                  className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-emerald-400 px-5 py-3 font-semibold text-slate-950 shadow-lg shadow-emerald-500/10 transition hover:bg-emerald-300"
                 >
-                  Search
+                  {isSearching ? "Searching..." : "Search"}
                 </button>
               </div>
             </div>
 
-            
+            <p className="mt-2 text-xs text-slate-500">Press Enter or click Search</p>
 
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <div>
@@ -988,6 +1047,7 @@ function DashboardPreview() {
                 <div className="grid grid-cols-3 gap-2">
                   {["Exact Part #", "Broad", "UPC"].map((type) => (
                     <button
+                      type="button"
                       key={type}
                       onClick={() => setSearchType(type)}
                       className={cn(
@@ -1014,13 +1074,15 @@ function DashboardPreview() {
                     >
                       {presets.map((preset) => (
                         <option key={preset.id} value={preset.id} className="bg-slate-900 text-white">
-                          {preset.name}{preset.isDefault ? " • Default" : ""}
+                          {preset.name}
+                          {preset.isDefault ? " • Default" : ""}
                         </option>
                       ))}
                     </select>
                     <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   </div>
                   <button
+                    type="button"
                     onClick={saveCurrentAsPreset}
                     className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white hover:bg-white/10"
                   >
@@ -1036,6 +1098,7 @@ function DashboardPreview() {
                 Active preset: <span className="text-slate-200">{selectedPreset?.name || "Custom"}</span>
               </div>
               <button
+                type="button"
                 onClick={() => setShowPresetManager(true)}
                 className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-300 hover:bg-white/10"
               >
@@ -1076,13 +1139,15 @@ function DashboardPreview() {
 
               <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm">
                 <span className="text-slate-400">
-                  Tracked open search tabs: <span className="text-slate-200">{openedSearchWindows.filter((tab) => tab && !tab.closed).length}</span>
+                  Tracked open search tabs:{" "}
+                  <span className="text-slate-200">{activeTrackedTabs}</span>
                 </span>
                 <button
+                  type="button"
                   onClick={closeLastSearchTabs}
                   className="rounded-full border border-white/10 bg-slate-900 px-3 py-1.5 text-slate-300 hover:bg-white/10"
                 >
-                  Close Last Search Tabs
+                  Close Previous Tabs
                 </button>
               </div>
             </div>
@@ -1092,12 +1157,14 @@ function DashboardPreview() {
                 <p className="text-sm text-slate-400">Choose marketplaces</p>
                 <div className="flex gap-2 text-sm">
                   <button
+                    type="button"
                     onClick={selectAllFree}
                     className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-slate-300"
                   >
                     Select All
                   </button>
                   <button
+                    type="button"
                     onClick={clearAll}
                     className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-slate-300"
                   >
@@ -1120,24 +1187,28 @@ function DashboardPreview() {
 
             <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
               <button
+                type="button"
                 onClick={openSelected}
                 className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-400 px-5 py-3.5 font-semibold text-slate-950"
               >
                 <ExternalLink className="h-4 w-4" /> Open Selected Sites
               </button>
               <button
+                type="button"
                 onClick={openAll}
                 className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 font-semibold text-white"
               >
                 Open All
               </button>
               <button
+                type="button"
                 onClick={closeLastSearchTabs}
                 className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 font-semibold text-white"
               >
-                Close Last Tabs
+                Close Previous Tabs
               </button>
               <button
+                type="button"
                 onClick={copySearchTerm}
                 className="flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 font-semibold text-white"
               >
@@ -1158,8 +1229,12 @@ function DashboardPreview() {
               <div className="mt-4 space-y-3">
                 {recentSearches.map((item) => (
                   <button
+                    type="button"
                     key={item}
-                    onClick={() => setSearch(item)}
+                    onClick={() => {
+                      setSearch(item);
+                      window.requestAnimationFrame(() => searchInputRef.current?.focus());
+                    }}
                     className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/10"
                   >
                     {item}
@@ -1179,6 +1254,7 @@ function DashboardPreview() {
               <div className="mt-4 space-y-3">
                 {presets.map((preset) => (
                   <button
+                    type="button"
                     key={preset.id}
                     onClick={() => {
                       setSelectedPresetId(preset.id);
@@ -1202,6 +1278,7 @@ function DashboardPreview() {
         ) : null}
 
         {showUpgrade ? <UpgradeModal onClose={() => setShowUpgrade(false)} /> : null}
+
         <PresetManagerModal
           open={showPresetManager}
           onClose={() => setShowPresetManager(false)}
@@ -1242,7 +1319,9 @@ function Pricing() {
               <div>
                 <h3 className="text-2xl font-semibold text-white">{tier.name}</h3>
                 <p className="mt-3 text-4xl font-bold text-white">{tier.price}</p>
-                {tier.subprice ? <p className="mt-2 text-sm text-emerald-300">{tier.subprice}</p> : null}
+                {tier.subprice ? (
+                  <p className="mt-2 text-sm text-emerald-300">{tier.subprice}</p>
+                ) : null}
                 <p className="mt-3 text-slate-300">{tier.desc}</p>
               </div>
               {tier.featured ? (
@@ -1253,7 +1332,10 @@ function Pricing() {
             </div>
             <ul className="mt-6 space-y-3 text-slate-200">
               {tier.items.map((item) => (
-                <li key={item} className="rounded-2xl border border-white/10 bg-slate-950/60 px-3 py-2">
+                <li
+                  key={item}
+                  className="rounded-2xl border border-white/10 bg-slate-950/60 px-3 py-2"
+                >
                   {item}
                 </li>
               ))}
@@ -1304,11 +1386,17 @@ function LoginPreview() {
           <div className="mt-6 space-y-4">
             <div>
               <label className="mb-2 block text-sm text-slate-400">Email</label>
-              <input className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none" defaultValue="seller@example.com" />
+              <input
+                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+                defaultValue="seller@example.com"
+              />
             </div>
             <div>
               <label className="mb-2 block text-sm text-slate-400">Password</label>
-              <input className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none" defaultValue="password123" />
+              <input
+                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+                defaultValue="password123"
+              />
             </div>
             <button className="w-full rounded-2xl bg-emerald-400 px-5 py-3.5 font-semibold text-slate-950">
               Sign In
@@ -1332,7 +1420,11 @@ function UpgradeModal({ onClose }) {
             <CreditCard className="h-5 w-5 text-slate-400" />
             <h3 className="text-2xl font-semibold text-white">Upgrade to Pro</h3>
           </div>
-          <button onClick={onClose} className="rounded-2xl border border-white/10 bg-white/5 p-3 text-slate-300">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-2xl border border-white/10 bg-white/5 p-3 text-slate-300"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -1345,10 +1437,18 @@ function UpgradeModal({ onClose }) {
               Get saved presets, unlimited searches, search history, and eBay Sold access in one clean upgrade.
             </p>
             <div className="mt-6 space-y-3 text-sm text-emerald-50/90">
-              <div className="flex items-center gap-3"><CheckCircle2 className="h-4 w-4" /> Unlimited searches</div>
-              <div className="flex items-center gap-3"><CheckCircle2 className="h-4 w-4" /> Saved presets</div>
-              <div className="flex items-center gap-3"><CheckCircle2 className="h-4 w-4" /> Search history</div>
-              <div className="flex items-center gap-3"><CheckCircle2 className="h-4 w-4" /> eBay Sold access</div>
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="h-4 w-4" /> Unlimited searches
+              </div>
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="h-4 w-4" /> Saved presets
+              </div>
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="h-4 w-4" /> Search history
+              </div>
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="h-4 w-4" /> eBay Sold access
+              </div>
             </div>
           </div>
 
@@ -1364,7 +1464,7 @@ function UpgradeModal({ onClose }) {
                 </div>
               </div>
               <p className="mt-4 text-4xl font-bold text-white">
-                $19<span className="text-lg font-medium text-slate-400">/mo</span>
+                $29<span className="text-lg font-medium text-slate-400">/mo</span>
               </p>
               <button className="mt-5 w-full rounded-2xl bg-emerald-400 px-5 py-3.5 font-semibold text-slate-950">
                 Start Pro
@@ -1374,18 +1474,18 @@ function UpgradeModal({ onClose }) {
             <div className="rounded-[28px] border border-white/10 bg-white/5 p-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h4 className="text-xl font-semibold text-white">Founders Access</h4>
-                  <p className="mt-2 text-slate-300">Limited early supporter offer</p>
+                  <h4 className="text-xl font-semibold text-white">Charter Annual</h4>
+                  <p className="mt-2 text-slate-300">Best-value launch offer</p>
                 </div>
                 <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300">
-                  Limited
+                  Best Value
                 </div>
               </div>
               <p className="mt-4 text-4xl font-bold text-white">
-                $49<span className="text-lg font-medium text-slate-400"> one-time</span>
+                $239<span className="text-lg font-medium text-slate-400"> / year</span>
               </p>
               <button className="mt-5 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 font-semibold text-white">
-                Claim Founders Plan
+                Claim Charter Pricing
               </button>
             </div>
           </div>
