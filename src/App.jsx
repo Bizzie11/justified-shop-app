@@ -1421,7 +1421,202 @@ function Footer() {
   );
 }
 
+function LegalPageLayout({ title, children }) {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white">
+      <header className="border-b border-white/10 bg-slate-950/90 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4 md:px-10">
+          <div className="flex items-center gap-3">
+            <LogoMark />
+            <div>
+              <p className="text-lg font-semibold text-white">Justified Shop</p>
+              <p className="text-sm text-slate-400">Search Faster. Source Smarter.</p>
+            </div>
+          </div>
+          <a
+            href="/"
+            className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white"
+          >
+            Back to Home
+          </a>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-4xl px-6 py-16 md:px-10">
+        <div className="rounded-[32px] border border-white/10 bg-white/5 p-8 md:p-10">
+          <h1 className="text-3xl font-bold text-white md:text-4xl">{title}</h1>
+          <div className="mt-8 space-y-6 text-sm leading-7 text-slate-300 md:text-base">{children}</div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function PrivacyPage() {
+  return (
+    <LegalPageLayout title="Privacy Policy">
+      <p>
+        Justified Shop collects only the information needed to operate the service, such as
+        account details, support requests, and basic usage information.
+      </p>
+
+      <div>
+        <h2 className="mb-2 text-xl font-semibold text-white">What we collect</h2>
+        <p>
+          We may collect your email address, subscription status, support communications, and
+          standard technical information needed to keep the service running.
+        </p>
+      </div>
+
+      <div>
+        <h2 className="mb-2 text-xl font-semibold text-white">How we use it</h2>
+        <p>
+          We use this information to provide access to the app, improve the product, process
+          billing, respond to support requests, and maintain platform security.
+        </p>
+      </div>
+
+      <div>
+        <h2 className="mb-2 text-xl font-semibold text-white">Payments</h2>
+        <p>
+          Payment information is processed securely by our payment provider. Justified Shop does
+          not store full credit card details on its own servers.
+        </p>
+      </div>
+
+      <div>
+        <h2 className="mb-2 text-xl font-semibold text-white">Data sharing</h2>
+        <p>
+          We do not sell your personal information. We may share limited information only with
+          providers needed to operate the service, such as payment processors, hosting providers,
+          or analytics tools.
+        </p>
+      </div>
+
+      <div>
+        <h2 className="mb-2 text-xl font-semibold text-white">Questions</h2>
+        <p>
+          If you have questions about this policy, contact us at
+          {" "}
+          <a className="text-emerald-300 hover:text-emerald-200" href="mailto:support@justifiedventuresllc.com">
+            support@justifiedventuresllc.com
+          </a>.
+        </p>
+      </div>
+    </LegalPageLayout>
+  );
+}
+
+function TermsPage() {
+  return (
+    <LegalPageLayout title="Terms of Service">
+      <p>
+        Justified Shop provides marketplace research and workflow tools for sellers. By using the
+        service, you agree to use it responsibly and in compliance with applicable marketplace,
+        platform, and payment-provider rules.
+      </p>
+
+      <div>
+        <h2 className="mb-2 text-xl font-semibold text-white">Use of the service</h2>
+        <p>
+          You are responsible for how you use the product, how you interpret search results, and
+          how you conduct your business on third-party marketplaces.
+        </p>
+      </div>
+
+      <div>
+        <h2 className="mb-2 text-xl font-semibold text-white">Accounts and access</h2>
+        <p>
+          Access to paid features may require an active subscription. We may suspend or terminate
+          access for misuse, abuse, fraud, or actions that threaten the service or other users.
+        </p>
+      </div>
+
+      <div>
+        <h2 className="mb-2 text-xl font-semibold text-white">No business guarantees</h2>
+        <p>
+          Justified Shop is a productivity tool. We do not guarantee profits, sourcing outcomes,
+          marketplace approvals, listing success, or uninterrupted access to third-party platforms.
+        </p>
+      </div>
+
+      <div>
+        <h2 className="mb-2 text-xl font-semibold text-white">Changes</h2>
+        <p>
+          We may update the service, pricing, or terms from time to time. Continued use of the
+          service after changes means you accept the updated terms.
+        </p>
+      </div>
+    </LegalPageLayout>
+  );
+}
+
+function BillingPage() {
+  return (
+    <LegalPageLayout title="Billing & Cancellations">
+      <p>
+        Paid subscriptions renew automatically unless canceled before the next billing date.
+        Monthly and annual plans remain active until the end of the current paid period.
+      </p>
+
+      <div>
+        <h2 className="mb-2 text-xl font-semibold text-white">Plans</h2>
+        <p>
+          Justified Shop currently offers monthly and annual subscription options. Pricing is shown
+          clearly at checkout before purchase.
+        </p>
+      </div>
+
+      <div>
+        <h2 className="mb-2 text-xl font-semibold text-white">Cancellation</h2>
+        <p>
+          You may cancel at any time before renewal. Canceling stops future billing but does not
+          automatically create a refund for time already billed.
+        </p>
+      </div>
+
+      <div>
+        <h2 className="mb-2 text-xl font-semibold text-white">Refunds</h2>
+        <p>
+          Refund requests are reviewed case by case. If you need help with a billing issue, contact
+          us at
+          {" "}
+          <a className="text-emerald-300 hover:text-emerald-200" href="mailto:support@justifiedventuresllc.com">
+            support@justifiedventuresllc.com
+          </a>.
+        </p>
+      </div>
+
+      <div>
+        <h2 className="mb-2 text-xl font-semibold text-white">Support</h2>
+        <p>
+          For billing questions, subscription problems, or cancellation help, email
+          {" "}
+          <a className="text-emerald-300 hover:text-emerald-200" href="mailto:support@justifiedventuresllc.com">
+            support@justifiedventuresllc.com
+          </a>.
+        </p>
+      </div>
+    </LegalPageLayout>
+  );
+}
+
 export default function App() {
+  const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
+
+  if (pathname === "/privacy") {
+    return <PrivacyPage />;
+  }
+
+  if (pathname === "/terms") {
+    return <TermsPage />;
+  }
+
+  if (pathname === "/billing") {
+    return <BillingPage />;
+  }
+
+  return (
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <Nav />
