@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Search,
   ChevronDown,
@@ -208,7 +208,7 @@ function cleanSearchTerm(value, searchType) {
 
   if (!noExtraSpaces) return "";
   if (searchType === "UPC") return noExtraSpaces.replace(/[^0-9]/g, "");
-  if (searchType === "Exact") return noExtraSpaces;
+  if (searchType === "Exact Part #") return noExtraSpaces;
 
   return noExtraSpaces
     .replace(/["']/g, "")
@@ -757,6 +757,7 @@ function DashboardPreview() {
   );
 
   const [search, setSearch] = useState("Milwaukee hole saw kit 49-22-5605");
+  const searchInputRef = useRef(null);
   const [searchType, setSearchType] = useState("Exact");
   const [presets, setPresets] = useState(initialPresets);
   const [selectedPresetId, setSelectedPresetId] = useState(() =>
@@ -892,16 +893,22 @@ function DashboardPreview() {
       selectedSites,
       `Opened ${selectedSites.length} site${selectedSites.length === 1 ? "" : "s"}.`
     );
+    window.requestAnimationFrame(() => searchInputRef.current?.focus());
   };
 
   const openAll = () => {
     openSearchUrls(FREE_SITE_NAMES, `Opened ${FREE_SITE_NAMES.length} free marketplaces.`);
+    window.requestAnimationFrame(() => searchInputRef.current?.focus());
   };
 
   const closeLastSearchTabs = () => {
     const closedCount = closeTrackedTabs();
-    if (!closedCount) return showToast("No tracked search tabs are open right now.");
+    if (!closedCount) {
+      window.requestAnimationFrame(() => searchInputRef.current?.focus());
+      return showToast("No tracked search tabs are open right now.");
+    }
     showToast(`Closed ${closedCount} tab${closedCount === 1 ? "" : "s"}.`);
+    window.requestAnimationFrame(() => searchInputRef.current?.focus());
   };
 
   const copySearchTerm = async () => {
@@ -943,12 +950,26 @@ function DashboardPreview() {
               <div className="flex items-center gap-3">
                 <Search className="h-5 w-5 text-slate-500" />
                 <input
+                  ref={searchInputRef}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && openSelected()}
                   className="w-full bg-transparent text-lg text-white outline-none placeholder:text-slate-500"
                   placeholder="Enter product name, model number, or UPC"
                 />
+                {search ? (
+                  <button
+                    onClick={() => {
+                      setSearch("");
+                      window.requestAnimationFrame(() => searchInputRef.current?.focus());
+                    }}
+                    className="rounded-full p-1 text-slate-400 transition hover:bg-white/10 hover:text-white"
+                    aria-label="Clear search"
+                    type="button"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                ) : null}
               </div>
             </div>
 
@@ -960,7 +981,7 @@ function DashboardPreview() {
               <div>
                 <p className="mb-2 text-sm text-slate-400">Search type</p>
                 <div className="grid grid-cols-3 gap-2">
-                  {["Exact", "Broad", "UPC"].map((type) => (
+                  {["Exact Part #", "Broad", "UPC"].map((type) => (
                     <button
                       key={type}
                       onClick={() => setSearchType(type)}
