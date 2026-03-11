@@ -108,24 +108,36 @@ const pricing = [
   {
     name: "Free",
     price: "$0",
-    desc: "Try the workflow and see how fast it feels.",
+    desc: "Try the workflow and see how much faster sourcing can feel.",
     items: ["Limited daily searches", "Core marketplaces", "Open selected sites"],
     cta: "Start Free",
   },
   {
     name: "Pro",
-    price: "$19/mo",
-    desc: "For serious sellers checking products every day.",
-    items: ["Unlimited searches", "Saved presets", "Search history", "eBay Sold access"],
+    price: "$29/mo",
+    desc: "For sellers who check products every day and want full flexibility month to month.",
+    items: [
+      "Unlimited searches",
+      "Saved presets",
+      "Recent search history",
+      "eBay Sold access",
+    ],
     cta: "Start Pro",
-    featured: true,
   },
   {
-    name: "Founders",
-    price: "$49 once",
-    desc: "Limited early supporter offer.",
-    items: ["Lifetime access", "All current Pro features", "Priority feedback lane"],
-    cta: "Claim Founders",
+    name: "Charter",
+    price: "$239/yr",
+    subprice: "Equivalent to $19.99/month, billed annually",
+    desc: "Best-value launch offer for early users who want the strongest rate and full Pro access.",
+    items: [
+      "Everything in Pro",
+      "Locked-in first-year rate",
+      "Annual billing discount",
+      "Priority product feedback consideration",
+    ],
+    cta: "Claim Charter Pricing",
+    featured: true,
+    badge: "Best Value",
   },
 ];
 
@@ -1185,8 +1197,8 @@ function Pricing() {
     <section id="pricing" className="mx-auto max-w-7xl px-6 py-20 md:px-10">
       <SectionTitle
         eyebrow="Pricing"
-        title="Start simple. Validate fast."
-        text="This pricing structure is built to help you launch, get users, and improve from real feedback without overcomplicating version one."
+        title="Simple pricing for sellers who move fast."
+        text="Built for people who actually source products, compare marketplaces, and need a faster workflow every day."
         center
       />
       <div className="mt-12 grid gap-6 lg:grid-cols-3">
@@ -1204,11 +1216,12 @@ function Pricing() {
               <div>
                 <h3 className="text-2xl font-semibold text-white">{tier.name}</h3>
                 <p className="mt-3 text-4xl font-bold text-white">{tier.price}</p>
+                {tier.subprice ? <p className="mt-2 text-sm text-emerald-300">{tier.subprice}</p> : null}
                 <p className="mt-3 text-slate-300">{tier.desc}</p>
               </div>
               {tier.featured ? (
                 <span className="rounded-full bg-emerald-400 px-3 py-1 text-xs font-semibold text-slate-950">
-                  Most Popular
+                  {tier.badge || "Most Popular"}
                 </span>
               ) : null}
             </div>
