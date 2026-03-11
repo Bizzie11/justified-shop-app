@@ -50,7 +50,6 @@ function App() {
 
 function HomePage() {
   const navigate = useNavigate();
-
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState("search");
   const [selectedPresetId, setSelectedPresetId] = useState(DEFAULT_PRESETS[0].id);
