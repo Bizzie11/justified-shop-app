@@ -1271,6 +1271,30 @@ function DashboardPreview() {
     </section>
   );
 }
+const startCheckout = async (plan) => {
+  try {
+    const res = await fetch("/.netlify/functions/create-checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ plan }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Checkout failed");
+    }
+
+    if (data.url) {
+      window.location.href = data.url;
+    }
+  } catch (error) {
+    console.error("Checkout error:", error);
+    alert("Checkout failed. Please try again.");
+  }
+};
 
 function Pricing() {
   return (
@@ -1314,16 +1338,20 @@ function Pricing() {
                 </li>
               ))}
             </ul>
-            <button
-              className={cn(
-                "mt-6 w-full rounded-2xl px-4 py-3 font-semibold",
-                tier.featured
-                  ? "bg-emerald-400 text-slate-950"
-                  : "border border-white/10 bg-white/5 text-white"
-              )}
-            >
-              {tier.cta}
-            </button>
+    <button
+  onClick={() => {
+    if (tier.name === "Pro") startCheckout("pro-monthly")
+    else if (tier.name === "Annual") startCheckout("annual")
+  }}
+  className={cn(
+    "mt-6 w-full rounded-2xl px-4 py-3 font-semibold",
+    tier.featured
+      ? "bg-emerald-400 text-slate-950"
+      : "border border-white/10 bg-white/5 text-white"
+  )}
+>
+  {tier.cta}
+</button>
           </div>
         ))}
       </div>
@@ -1713,3 +1741,4 @@ export default function App() {
     </div>
   );
 }
+
