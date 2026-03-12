@@ -1341,7 +1341,7 @@ function Pricing() {
     <button
   onClick={() => {
     if (tier.name === "Pro") startCheckout("pro-monthly")
-    else if (tier.name === "Annual") startCheckout("annual")
+    else if (tier.name === "Annual Plan") startCheckout("annual")
   }}
   className={cn(
     "mt-6 w-full rounded-2xl px-4 py-3 font-semibold",
@@ -1741,4 +1741,5 @@ export default function App() {
     </div>
   );
 }
+
 
