@@ -806,7 +806,13 @@ function DashboardPreview() {
     () => getPresetById(presets, selectedPresetId),
     [presets, selectedPresetId]
   );
+const presetMatchesSelection = useMemo(() => {
+  if (!selectedPreset) return false;
 
+  if (selectedPreset.sites.length !== selectedSites.length) return false;
+
+  return selectedPreset.sites.every((site) => selectedSites.includes(site));
+}, [selectedPreset, selectedSites]);
   const showToast = (message) => {
     setToast(message);
     window.clearTimeout(showToast.timeoutId);
@@ -1060,7 +1066,7 @@ function DashboardPreview() {
 
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
               <div className="text-sm text-slate-400">
-                Active preset: <span className="text-slate-200">{selectedPreset?.name || "Custom"}</span>
+               Active preset: <span className="text-slate-200">{presetMatchesSelection ? selectedPreset?.name : "Custom"}</span>
               </div>
               <button
                 type="button"
@@ -1792,6 +1798,7 @@ function CancelPage() {
     </div>
   );
 }
+
 
 
 
