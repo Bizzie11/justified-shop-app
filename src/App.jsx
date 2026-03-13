@@ -1074,7 +1074,7 @@ const presetMatchesSelection = useMemo(() => {
   </div>
 
   <div className="mt-4 space-y-3">
-    {mockSnapshot.map((item) => (
+   {snapshotData.map((item) => (
       <div
         key={item.site}
         className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3"
