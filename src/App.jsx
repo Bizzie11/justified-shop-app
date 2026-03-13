@@ -1195,7 +1195,7 @@ const presetMatchesSelection = useMemo(() => {
 
             <div className="mt-6">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-sm text-slate-400">Choose marketplaces</p>
+                <p className="text-sm text-slate-400">Marketplaces to check</p>
                 <div className="flex gap-2 text-sm">
                   <button
                     type="button"
@@ -1869,6 +1869,7 @@ function CancelPage() {
     </div>
   );
 }
+
 
 
 
