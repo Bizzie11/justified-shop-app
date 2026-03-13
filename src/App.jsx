@@ -1731,6 +1731,9 @@ export default function App() {
 if (pathname === "/success") {
   return <SuccessPage />;
 }
+  if (pathname === "/cancel") {
+  return <CancelPage />;
+}
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <Nav />
@@ -1756,6 +1759,32 @@ function SuccessPage() {
         <p className="text-slate-400 mb-8">
           Your subscription is now active.
         </p>
+        <a
+          href="/"
+          className="inline-block bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold px-6 py-3 rounded-xl transition"
+        >
+          Return to Dashboard
+        </a>
+      </div>
+    </div>
+  );
+}
+function CancelPage() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
+      <div className="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center shadow-xl">
+        <h1 className="text-3xl font-bold text-red-400 mb-4">
+          Checkout Cancelled
+        </h1>
+
+        <p className="text-slate-300 text-lg mb-4">
+          No payment was made.
+        </p>
+
+        <p className="text-slate-400 mb-8">
+          You can come back anytime and subscribe when you're ready.
+        </p>
+
         <a
           href="/"
           className="inline-block bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold px-6 py-3 rounded-xl transition"
