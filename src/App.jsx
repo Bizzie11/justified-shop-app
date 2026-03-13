@@ -815,11 +815,12 @@ function DashboardPreview() {
 
 const snapshotPrices = mockSnapshot
   .map((item) => {
-    const value = Number(String(item.price).replace(/[^0-9.]/g, ""));
-    return Number.isFinite(value) ? value : null;
+  const raw = String(item.price).replace(/[^0-9.]/g, "");
+if (!raw) return null;
+const value = Number(raw);
+return Number.isFinite(value) ? value : null;
   })
-  .filter((value) => value !== null);
-
+       .filter((value) => value !== null);
 const lowestPrice =
   snapshotPrices.length > 0 ? `$${Math.min(...snapshotPrices).toFixed(2)}` : "—";
 
@@ -1868,6 +1869,7 @@ function CancelPage() {
     </div>
   );
 }
+
 
 
 
