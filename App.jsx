@@ -1035,25 +1035,6 @@ const presetMatchesSelection = useMemo(() => {
                   Search
                 </button>
               </div>
-                     <div>
-  <p className="mb-2 text-sm text-slate-400">Search type</p>
-  <div className="grid grid-cols-3 gap-2">
-    {["Exact Part #", "Broad", "UPC"].map((type) => (
-      <button
-        type="button"
-        key={type}
-        onClick={() => setSearchType(type)}
-        className={cn(
-          "rounded-2xl px-4 py-3 text-sm font-medium",
-          searchType === type
-            ? "bg-emerald-400 font-semibold text-slate-950"
-            : "border border-white/10 bg-white/5 text-slate-300"
-        )}
-      >
-        {type}
-      </button>
-    ))}
-  </div>
             </div>
 <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
   <div className="flex items-start justify-between gap-3">
@@ -1088,8 +1069,6 @@ const presetMatchesSelection = useMemo(() => {
   <div className="mt-4 grid gap-3 sm:grid-cols-3">
     <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
       <p className="text-xs uppercase tracking-wide text-slate-500">Lowest found</p>
-
-</div>   
       <p className="mt-1 text-lg font-semibold text-emerald-300">{lowestPrice}</p>
     </div>
 
@@ -1104,7 +1083,27 @@ const presetMatchesSelection = useMemo(() => {
     </div>
   </div>
 </div>
-  
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <div>
+                <p className="mb-2 text-sm text-slate-400">Search type</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {["Exact Part #", "Broad", "UPC"].map((type) => (
+                    <button
+                      type="button"
+                      key={type}
+                      onClick={() => setSearchType(type)}
+                      className={cn(
+                        "rounded-2xl px-4 py-3 text-sm font-medium",
+                        searchType === type
+                          ? "bg-emerald-400 font-semibold text-slate-950"
+                          : "border border-white/10 bg-white/5 text-slate-300"
+                      )}
+                    >
+                      {type}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               <div>
                 <p className="mb-2 text-sm text-slate-400">Preset</p>
@@ -1870,8 +1869,6 @@ function CancelPage() {
     </div>
   );
 }
-
-
 
 
 
