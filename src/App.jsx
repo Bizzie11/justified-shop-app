@@ -80,14 +80,14 @@ const DEFAULT_PRESETS = [
   {
     id: "preset-hardware",
     name: "Hardware",
-    sites: ["Amazon", "Home Depot", "Lowe's", "Google"],
+    sites: ["Amazon", "Google"],
     isDefault: false,
     isSystem: true,
   },
   {
     id: "preset-plumbing",
     name: "Plumbing",
-    sites: ["Amazon", "Walmart", "Home Depot", "Google"],
+    sites: ["Amazon", "Walmart", "Google"],
     isDefault: false,
     isSystem: true,
   },
@@ -1796,6 +1796,7 @@ function CancelPage() {
     </div>
   );
 }
+
 
 
 
