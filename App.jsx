@@ -938,10 +938,12 @@ const presetMatchesSelection = useMemo(() => {
     if (!cleanedTerm) return showToast("Enter a search term first.");
     if (!siteNames.length) return showToast("Choose at least one site.");
 
-    let replacedCount = 0;
-    if (replaceOpenTabs) {
-      replacedCount = closeTrackedTabs();
-    }
+   let replacedCount = 0;
+showToast(`replaceOpenTabs=${replaceOpenTabs}, tracked=${openedSearchWindows.length}`);
+if (replaceOpenTabs) {
+  replacedCount = closeTrackedTabs();
+  showToast(`closed=${replacedCount}`);
+}
 
     const urls = buildUrls(cleanedTerm, siteNames);
     const newTabs = openUrlsInTabs(urls);
