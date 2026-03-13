@@ -806,6 +806,30 @@ function DashboardPreview() {
     () => getPresetById(presets, selectedPresetId),
     [presets, selectedPresetId]
   );
+  const mockSnapshot = [
+  { site: "Amazon", price: "$24.99" },
+  { site: "Walmart", price: "$21.88" },
+  { site: "eBay", price: "$19.50" },
+  { site: "Target", price: "No result" },
+];
+
+const snapshotPrices = mockSnapshot
+  .map((item) => {
+    const value = Number(String(item.price).replace(/[^0-9.]/g, ""));
+    return Number.isFinite(value) ? value : null;
+  })
+  .filter((value) => value !== null);
+
+const lowestPrice =
+  snapshotPrices.length > 0 ? `$${Math.min(...snapshotPrices).toFixed(2)}` : "—";
+
+const highestPrice =
+  snapshotPrices.length > 0 ? `$${Math.max(...snapshotPrices).toFixed(2)}` : "—";
+
+const spreadPrice =
+  snapshotPrices.length > 1
+    ? `$${(Math.max(...snapshotPrices) - Math.min(...snapshotPrices)).toFixed(2)}`
+    : "—";
 const presetMatchesSelection = useMemo(() => {
   if (!selectedPreset) return false;
 
@@ -1011,7 +1035,53 @@ const presetMatchesSelection = useMemo(() => {
                 </button>
               </div>
             </div>
+<div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+  <div className="flex items-start justify-between gap-3">
+    <div>
+      <p className="text-sm font-medium text-white">Quick Snapshot</p>
+      <p className="text-sm text-slate-400">Fast price check across marketplaces</p>
+    </div>
+    <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300">
+      Preview
+    </div>
+  </div>
 
+  <div className="mt-4 space-y-3">
+    {mockSnapshot.map((item) => (
+      <div
+        key={item.site}
+        className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3"
+      >
+        <span className="text-sm text-slate-300">{item.site}</span>
+        <span
+          className={cn(
+            "text-sm font-semibold",
+            item.price === "No result" ? "text-slate-500" : "text-white"
+          )}
+        >
+          {item.price}
+        </span>
+      </div>
+    ))}
+  </div>
+
+  <div className="mt-4 grid gap-3 sm:grid-cols-3">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
+      <p className="text-xs uppercase tracking-wide text-slate-500">Lowest found</p>
+      <p className="mt-1 text-lg font-semibold text-emerald-300">{lowestPrice}</p>
+    </div>
+
+    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
+      <p className="text-xs uppercase tracking-wide text-slate-500">Highest found</p>
+      <p className="mt-1 text-lg font-semibold text-white">{highestPrice}</p>
+    </div>
+
+    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
+      <p className="text-xs uppercase tracking-wide text-slate-500">Spread</p>
+      <p className="mt-1 text-lg font-semibold text-white">{spreadPrice}</p>
+    </div>
+  </div>
+</div>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <div>
                 <p className="mb-2 text-sm text-slate-400">Search type</p>
@@ -1798,6 +1868,7 @@ function CancelPage() {
     </div>
   );
 }
+
 
 
 
