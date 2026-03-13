@@ -776,7 +776,7 @@ function DashboardPreview() {
     []
   );
 
-  const [search, setSearch] = useState("Klein 11-in-1 screwdriver");
+  const [search, setSearch] = useState("");
   const searchInputRef = useRef(null);
   const [searchType, setSearchType] = useState("Exact Part #");
   const [presets, setPresets] = useState(initialPresets);
@@ -1796,6 +1796,7 @@ function CancelPage() {
     </div>
   );
 }
+
 
 
 
