@@ -806,14 +806,34 @@ function DashboardPreview() {
     () => getPresetById(presets, selectedPresetId),
     [presets, selectedPresetId]
   );
-  const mockSnapshot = [
-  { site: "Amazon", price: "$24.99" },
-  { site: "Walmart", price: "$21.88" },
-  { site: "eBay", price: "$19.50" },
-  { site: "Target", price: "No result" },
-];
+const [snapshotData, setSnapshotData] = useState([]);
 
-const snapshotPrices = mockSnapshot
+useEffect(() => {
+  if (!cleanedTerm || !selectedSites.length) {
+    setSnapshotData([]);
+    return;
+  }
+
+  fetch("/.netlify/functions/get-snapshot", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      searchTerm: cleanedTerm,
+      selectedSites,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      setSnapshotData(data.rows || []);
+    })
+    .catch(() => {
+      setSnapshotData([]);
+    });
+}, [cleanedTerm, selectedSites]);
+
+const snapshotPrices = snapshotData
   .map((item) => {
   const raw = String(item.price).replace(/[^0-9.]/g, "");
 if (!raw) return null;
