@@ -49,21 +49,22 @@ const SITE_CONFIG = [
         term
       )}&LH_Sold=1&LH_Complete=1`,
   },
-  {
-    name: "Home Depot",
-    free: true,
-    buildUrl: (term) => `https://www.homedepot.com/s/${encodeURIComponent(term)}`,
-  },
-  {
-    name: "Lowe's",
-    free: true,
-    buildUrl: (term) => `https://www.lowes.com/search?searchTerm=${encodeURIComponent(term)}`,
-  },
-  {
-    name: "Google",
-    free: true,
-    buildUrl: (term) => `https://www.google.com/search?q=${encodeURIComponent(term)}`,
-  },
+{
+  name: "Google",
+  free: true,
+  buildUrl: (term) => `https://www.google.com/search?q=${encodeURIComponent(term)}`,
+},
+{
+  name: "Facebook Marketplace",
+  free: true,
+  buildUrl: (term) =>
+    `https://www.facebook.com/marketplace/search/?query=${encodeURIComponent(term)}`,
+},
+{
+  name: "Target",
+  free: true,
+  buildUrl: (term) => `https://www.target.com/s?searchTerm=${encodeURIComponent(term)}`,
+},
 ];
 
 const FREE_SITE_NAMES = SITE_CONFIG.filter((site) => site.free).map((site) => site.name);
@@ -1795,5 +1796,6 @@ function CancelPage() {
     </div>
   );
 }
+
 
 
