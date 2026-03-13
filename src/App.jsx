@@ -54,12 +54,7 @@ const SITE_CONFIG = [
   free: true,
   buildUrl: (term) => `https://www.google.com/search?q=${encodeURIComponent(term)}`,
 },
-{
-  name: "Facebook Marketplace",
-  free: true,
-  buildUrl: (term) =>
-    `https://www.facebook.com/marketplace/search/?query=${encodeURIComponent(term)}`,
-},
+
 {
   name: "Target",
   free: true,
@@ -1796,6 +1791,7 @@ function CancelPage() {
     </div>
   );
 }
+
 
 
 
