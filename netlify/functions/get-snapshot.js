@@ -2,22 +2,34 @@ exports.handler = async (event) => {
   try {
     const { searchTerm = "", selectedSites = [] } = JSON.parse(event.body || "{}");
 
-    const mockPriceMap = {
-      Amazon: "$24.99",
-      Walmart: "$21.88",
-      eBay: "$19.50",
-      "eBay Sold": "$22.40",
-      Google: "Search only",
-      Target: "No result",
-    };
+  const mockPriceMap = {
+  Amazon: { price: "$24.99", type: "active" },
+  Walmart: { price: "$21.88", type: "active" },
+  eBay: { price: "$19.50", type: "active" },
+  "eBay Sold": { price: "$22.40", type: "sold" },
+};
 
-    const rows = selectedSites.map((siteName) => ({
+const rows = selectedSites.map((siteName) => {
+  const entry = mockPriceMap[siteName];
+
+  if (!entry) {
+    return {
       site: siteName,
-      price: mockPriceMap[siteName] || "No result",
+      price: "No result",
+      type: "unknown",
       source: "mock",
-      status: mockPriceMap[siteName] ? "Preview" : "No result",
       searchTerm,
-    }));
+    };
+  }
+
+  return {
+    site: siteName,
+    price: entry.price,
+    type: entry.type,
+    source: "mock",
+    searchTerm,
+  };
+});
 
     return {
       statusCode: 200,
