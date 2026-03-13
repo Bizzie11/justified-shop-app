@@ -28,41 +28,42 @@ const STORAGE_KEYS = {
 const SITE_CONFIG = [
   {
     name: "Amazon",
-    free: true,
+    tier: "free",
     buildUrl: (term) => `https://www.amazon.com/s?k=${encodeURIComponent(term)}`,
   },
   {
     name: "Walmart",
-    free: true,
+    tier: "free",
     buildUrl: (term) => `https://www.walmart.com/search?q=${encodeURIComponent(term)}`,
   },
   {
     name: "eBay",
-    free: true,
+    tier: "free",
     buildUrl: (term) => `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(term)}`,
   },
   {
     name: "eBay Sold",
-    free: false,
+    tier: "pro",
     buildUrl: (term) =>
       `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(
         term
       )}&LH_Sold=1&LH_Complete=1`,
   },
-{
-  name: "Google",
-  free: true,
-  buildUrl: (term) => `https://www.google.com/search?q=${encodeURIComponent(term)}`,
-},
-
-{
-  name: "Target",
-  free: true,
-  buildUrl: (term) => `https://www.target.com/s?searchTerm=${encodeURIComponent(term)}`,
-},
+  {
+    name: "Google",
+    tier: "free",
+    buildUrl: (term) => `https://www.google.com/search?q=${encodeURIComponent(term)}`,
+  },
+  {
+    name: "Target",
+    tier: "free",
+    buildUrl: (term) => `https://www.target.com/s?searchTerm=${encodeURIComponent(term)}`,
+  },
 ];
 
-const FREE_SITE_NAMES = SITE_CONFIG.filter((site) => site.free).map((site) => site.name);
+const FREE_SITE_NAMES = SITE_CONFIG
+  .filter((site) => site.tier === "free")
+  .map((site) => site.name);
 
 const DEFAULT_PRESETS = [
   {
@@ -160,6 +161,12 @@ function writeStorage(key, value) {
   } catch {
     // ignore storage errors
   }
+}
+function canAccessSite(userPlan, site) {
+  if (userPlan === "owner") return true;
+  if (site.tier === "free") return true;
+  if (site.tier === "pro") return userPlan === "pro" || userPlan === "annual";
+  return false;
 }
 
 function createPresetId() {
@@ -771,6 +778,9 @@ function DashboardPreview() {
     () => normalizePresets(readStorage(STORAGE_KEYS.presets, DEFAULT_PRESETS)),
     []
   );
+  const currentUser = {
+  plan: "owner",
+};
 
   const [search, setSearch] = useState("");
   const searchInputRef = useRef(null);
