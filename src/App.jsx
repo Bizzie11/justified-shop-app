@@ -168,7 +168,23 @@ function canAccessSite(userPlan, site) {
   if (site.tier === "pro") return userPlan === "pro" || userPlan === "annual";
   return false;
 }
+function getMockSnapshotData(searchTerm, selectedSites) {
+  if (!searchTerm.trim() || !selectedSites.length) return [];
 
+  const mockPriceMap = {
+    Amazon: "$24.99",
+    Walmart: "$21.88",
+    eBay: "$19.50",
+    "eBay Sold": "$22.40",
+    Google: "Search only",
+    Target: "No result",
+  };
+
+  return selectedSites.map((siteName) => ({
+    site: siteName,
+    price: mockPriceMap[siteName] || "No result",
+  }));
+}
 function createPresetId() {
   return `preset-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -816,24 +832,24 @@ function DashboardPreview() {
     () => getPresetById(presets, selectedPresetId),
     [presets, selectedPresetId]
   );
-  const mockSnapshot = [
-  { site: "Amazon", price: "$24.99" },
-  { site: "Walmart", price: "$21.88" },
-  { site: "eBay", price: "$19.50" },
-  { site: "Target", price: "No result" },
-];
+ const snapshotData = useMemo(
+  () => getMockSnapshotData(cleanedTerm, selectedSites),
+  [cleanedTerm, selectedSites]
+);
 
-const snapshotPrices = mockSnapshot
+const snapshotPrices = snapshotData
   .map((item) => {
-  const raw = String(item.price).replace(/[^0-9.]/g, "");
-if (!raw) return null;
-const value = Number(raw);
-return Number.isFinite(value) ? value : null;
+    const raw = String(item.price).replace(/[^0-9.]/g, "");
+    if (!raw) return null;
+    const value = Number(raw);
+    return Number.isFinite(value) ? value : null;
   })
-       .filter((value) => value !== null);
+  .filter((value) => value !== null);
+
 const lowestPrice =
   snapshotPrices.length > 0 ? `$${Math.min(...snapshotPrices).toFixed(2)}` : "—";
 
+   
 const highestPrice =
   snapshotPrices.length > 0 ? `$${Math.max(...snapshotPrices).toFixed(2)}` : "—";
 
