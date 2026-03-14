@@ -1895,15 +1895,3 @@ function CancelPage() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
