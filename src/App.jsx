@@ -28,42 +28,41 @@ const STORAGE_KEYS = {
 const SITE_CONFIG = [
   {
     name: "Amazon",
-    tier: "free",
+    free: true,
     buildUrl: (term) => `https://www.amazon.com/s?k=${encodeURIComponent(term)}`,
   },
   {
     name: "Walmart",
-    tier: "free",
+    free: true,
     buildUrl: (term) => `https://www.walmart.com/search?q=${encodeURIComponent(term)}`,
   },
   {
     name: "eBay",
-    tier: "free",
+    free: true,
     buildUrl: (term) => `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(term)}`,
   },
   {
     name: "eBay Sold",
-    tier: "pro",
+    free: false,
     buildUrl: (term) =>
       `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(
         term
       )}&LH_Sold=1&LH_Complete=1`,
   },
-  {
-    name: "Google",
-    tier: "free",
-    buildUrl: (term) => `https://www.google.com/search?q=${encodeURIComponent(term)}`,
-  },
-  {
-    name: "Target",
-    tier: "free",
-    buildUrl: (term) => `https://www.target.com/s?searchTerm=${encodeURIComponent(term)}`,
-  },
+{
+  name: "Google",
+  free: true,
+  buildUrl: (term) => `https://www.google.com/search?q=${encodeURIComponent(term)}`,
+},
+
+{
+  name: "Target",
+  free: true,
+  buildUrl: (term) => `https://www.target.com/s?searchTerm=${encodeURIComponent(term)}`,
+},
 ];
 
-const FREE_SITE_NAMES = SITE_CONFIG
-  .filter((site) => site.tier === "free")
-  .map((site) => site.name);
+const FREE_SITE_NAMES = SITE_CONFIG.filter((site) => site.free).map((site) => site.name);
 
 const DEFAULT_PRESETS = [
   {
@@ -162,29 +161,7 @@ function writeStorage(key, value) {
     // ignore storage errors
   }
 }
-function canAccessSite(userPlan, site) {
-  if (userPlan === "owner") return true;
-  if (site.tier === "free") return true;
-  if (site.tier === "pro") return userPlan === "pro" || userPlan === "annual";
-  return false;
-}
-function getMockSnapshotData(searchTerm, selectedSites) {
-  if (!searchTerm.trim() || !selectedSites.length) return [];
 
-  const mockPriceMap = {
-    Amazon: "$24.99",
-    Walmart: "$21.88",
-    eBay: "$19.50",
-    "eBay Sold": "$22.40",
-    Google: "Search only",
-    Target: "No result",
-  };
-
-  return selectedSites.map((siteName) => ({
-    site: siteName,
-    price: mockPriceMap[siteName] || "No result",
-  }));
-}
 function createPresetId() {
   return `preset-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -246,8 +223,7 @@ function buildUrls(term, siteNames) {
 }
 
 function openUrlsInTabs(urls) {
-  return [...urls]
-    .reverse()
+  return urls
     .map((item) => {
       try {
         return window.open(item.url, "_blank");
@@ -294,7 +270,7 @@ function SiteCard({ name, selected, onClick, locked }) {
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-2xl border px-4 py-2 text-left transition duration-150",
+        "rounded-2xl border px-4 py-3 text-left transition duration-150",
         selected
           ? "border-emerald-400/50 bg-emerald-400/10 text-white"
           : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10"
@@ -508,11 +484,7 @@ function PresetManagerModal({
                     key={site.name}
                     name={site.name}
                     selected={draftSites.includes(site.name)}
-<<<<<<< HEAD
                     locked={!site.free}
-=======
-                    locked={false}
->>>>>>> 08b940da27fd93490575905771df0175d5cdb675
                     onClick={() => toggleDraftSite(site)}
                   />
                 ))}
@@ -798,9 +770,6 @@ function DashboardPreview() {
     () => normalizePresets(readStorage(STORAGE_KEYS.presets, DEFAULT_PRESETS)),
     []
   );
-  const currentUser = {
-  plan: "owner",
-};
 
   const [search, setSearch] = useState("");
   const searchInputRef = useRef(null);
@@ -836,38 +805,7 @@ function DashboardPreview() {
     () => getPresetById(presets, selectedPresetId),
     [presets, selectedPresetId]
   );
- const snapshotData = useMemo(
-  () => getMockSnapshotData(cleanedTerm, selectedSites),
-  [cleanedTerm, selectedSites]
-);
 
-const snapshotPrices = snapshotData
-  .map((item) => {
-    const raw = String(item.price).replace(/[^0-9.]/g, "");
-    if (!raw) return null;
-    const value = Number(raw);
-    return Number.isFinite(value) ? value : null;
-  })
-  .filter((value) => value !== null);
-
-const lowestPrice =
-  snapshotPrices.length > 0 ? `$${Math.min(...snapshotPrices).toFixed(2)}` : "—";
-
-   
-const highestPrice =
-  snapshotPrices.length > 0 ? `$${Math.max(...snapshotPrices).toFixed(2)}` : "—";
-
-const spreadPrice =
-  snapshotPrices.length > 1
-    ? `$${(Math.max(...snapshotPrices) - Math.min(...snapshotPrices)).toFixed(2)}`
-    : "—";
-const presetMatchesSelection = useMemo(() => {
-  if (!selectedPreset) return false;
-
-  if (selectedPreset.sites.length !== selectedSites.length) return false;
-
-  return selectedPreset.sites.every((site) => selectedSites.includes(site));
-}, [selectedPreset, selectedSites]);
   const showToast = (message) => {
     setToast(message);
     window.clearTimeout(showToast.timeoutId);
@@ -1066,53 +1004,7 @@ const presetMatchesSelection = useMemo(() => {
                 </button>
               </div>
             </div>
-<div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
-  <div className="flex items-start justify-between gap-3">
-    <div>
-      <p className="text-sm font-medium text-white">Quick Snapshot</p>
-      <p className="text-sm text-slate-400">Fast price check across marketplaces</p>
-    </div>
-    <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300">
-      Preview
-    </div>
-  </div>
 
-  <div className="mt-4 space-y-3">
-   {snapshotData.map((item) => (
-      <div
-        key={item.site}
-        className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3"
-      >
-        <span className="text-sm text-slate-300">{item.site}</span>
-        <span
-          className={cn(
-            "text-sm font-semibold",
-            item.price === "No result" ? "text-slate-500" : "text-white"
-          )}
-        >
-          {item.price}
-        </span>
-      </div>
-    ))}
-  </div>
-
-  <div className="mt-4 grid gap-3 sm:grid-cols-3">
-    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
-      <p className="text-xs uppercase tracking-wide text-slate-500">Lowest found</p>
-      <p className="mt-1 text-lg font-semibold text-emerald-300">{lowestPrice}</p>
-    </div>
-
-    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
-      <p className="text-xs uppercase tracking-wide text-slate-500">Highest found</p>
-      <p className="mt-1 text-lg font-semibold text-white">{highestPrice}</p>
-    </div>
-
-    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
-      <p className="text-xs uppercase tracking-wide text-slate-500">Spread</p>
-      <p className="mt-1 text-lg font-semibold text-white">{spreadPrice}</p>
-    </div>
-  </div>
-</div>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <div>
                 <p className="mb-2 text-sm text-slate-400">Search type</p>
@@ -1167,7 +1059,7 @@ const presetMatchesSelection = useMemo(() => {
 
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
               <div className="text-sm text-slate-400">
-               Active preset: <span className="text-slate-200">{presetMatchesSelection ? selectedPreset?.name : "Custom"}</span>
+                Active preset: <span className="text-slate-200">{selectedPreset?.name || "Custom"}</span>
               </div>
               <button
                 type="button"
@@ -1225,7 +1117,7 @@ const presetMatchesSelection = useMemo(() => {
 
             <div className="mt-6">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-sm text-slate-400">Marketplaces to check</p>
+                <p className="text-sm text-slate-400">Choose marketplaces</p>
                 <div className="flex gap-2 text-sm">
                   <button
                     type="button"
@@ -1899,12 +1791,6 @@ function CancelPage() {
     </div>
   );
 }
-
-
-
-
-
-
 
 
 
