@@ -508,7 +508,7 @@ function PresetManagerModal({
                     key={site.name}
                     name={site.name}
                     selected={draftSites.includes(site.name)}
-                    locked={!site.free}
+                    locked={false}
                     onClick={() => toggleDraftSite(site)}
                   />
                 ))}
