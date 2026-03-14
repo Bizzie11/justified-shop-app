@@ -508,7 +508,7 @@ function PresetManagerModal({
                     key={site.name}
                     name={site.name}
                     selected={draftSites.includes(site.name)}
-                    locked={false}
+                    locked={!site.free}
                     onClick={() => toggleDraftSite(site)}
                   />
                 ))}
@@ -925,10 +925,10 @@ const presetMatchesSelection = useMemo(() => {
   };
 
   const toggleSite = (site) => {
-    if (!site.free) {
-      setShowUpgrade(true);
-      return;
-    }
+ if (!site.free) {
+  setShowUpgrade(true);
+  return;
+}
 
     setSelectedSites((current) =>
       current.includes(site.name)
