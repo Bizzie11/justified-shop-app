@@ -299,6 +299,7 @@ function PresetManagerModal({
   setSelectedSites,
   setPresets,
   showToast,
+  userPlan,
 }) {
   const [draftId, setDraftId] = useState("");
   const [draftName, setDraftName] = useState("");
