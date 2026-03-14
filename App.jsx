@@ -63,7 +63,16 @@ const SITE_CONFIG = [
 ];
 
 const FREE_SITE_NAMES = SITE_CONFIG.map((site) => site.name);
+const currentUser = {
+  plan: "owner",
+};
 
+const canAccessSite = (plan, site) => {
+  if (plan === "owner") return true;
+  if (site.free) return true;
+  if (plan === "pro" || plan === "annual") return true;
+  return false;
+};
 const DEFAULT_PRESETS = [
   {
     id: "preset-arbitrage",
@@ -1236,7 +1245,7 @@ if (replaceOpenTabs) {
                     key={site.name}
                     name={site.name}
                     selected={selectedSites.includes(site.name)}
-                    locked={!site.free}
+                    locked={!canAccessSite(currentUser.plan, site)}
                     onClick={() => toggleSite(site)}
                   />
                 ))}
