@@ -336,8 +336,8 @@ function PresetManagerModal({
   };
 
  const toggleDraftSite = (site) => {
-  const locked = !canAccessSite(userPlan, site);
-  if (locked) {
+  const locked = false;
+if (locked) {
     showToast("This marketplace is part of the paid plan.");
     return;
   }
@@ -495,7 +495,7 @@ function PresetManagerModal({
     key={site.name}
     name={site.name}
     selected={draftSites.includes(site.name)}
-    locked={!canAccessSite(userPlan, site)}
+   locked={false}
     onClick={() => toggleDraftSite(site)}
   />
 ))}
@@ -926,8 +926,8 @@ const presetMatchesSelection = useMemo(() => {
     setSelectedSites([...nextPreset.sites]);
   };
 const toggleSite = (site) => {
-  if (!canAccessSite(currentUser.plan, site)) {
-    setShowUpgrade(true);
+if (false) {
+  setShowUpgrade(true);
     return;
   }
 
@@ -1245,7 +1245,7 @@ if (replaceOpenTabs) {
                     key={site.name}
                     name={site.name}
                     selected={selectedSites.includes(site.name)}
-                    locked={!canAccessSite(currentUser.plan, site)}
+                    locked={false}
                     onClick={() => toggleSite(site)}
                   />
                 ))}
