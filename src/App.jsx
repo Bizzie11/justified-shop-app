@@ -223,7 +223,8 @@ function buildUrls(term, siteNames) {
 }
 
 function openUrlsInTabs(urls) {
-  return urls
+  return [...urls]
+    .reverse()
     .map((item) => {
       try {
         return window.open(item.url, "_blank");
@@ -1791,6 +1792,7 @@ function CancelPage() {
     </div>
   );
 }
+
 
 
 
