@@ -226,11 +226,15 @@ function buildUrls(term, siteNames) {
 function openUrlsInTabs(urls) {
   const openedTabs = [];
 
-  // Open tabs one by one in reverse order so first URL ends up leftmost
+  // keep reverse loop so tabs appear in normal left-to-right order
   for (let i = urls.length - 1; i >= 0; i--) {
     try {
+      const isGoogle = urls[i].name === "Google";
       const tab = window.open(urls[i].url, "_blank");
-      if (tab) openedTabs.push(tab);
+
+      if (tab && !isGoogle) {
+        openedTabs.push(tab);
+      }
     } catch {
       // ignore errors
     }
@@ -238,6 +242,7 @@ function openUrlsInTabs(urls) {
 
   return openedTabs;
 }
+
 
 // Function to open selected sites from the dashboard
 function openSelected() {
