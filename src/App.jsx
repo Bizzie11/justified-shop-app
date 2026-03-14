@@ -222,19 +222,83 @@ function buildUrls(term, siteNames) {
   }));
 }
 
+// Open multiple URLs in tabs and track them
 function openUrlsInTabs(urls) {
-  return [...urls]
-    .reverse()
-    .map((item) => {
-      try {
-        return window.open(item.url, "_blank");
-      } catch {
-        return null;
-      }
-    })
-    .filter(Boolean);
+  const openedTabs = [];
+
+  // Open tabs one by one in reverse order so first URL ends up leftmost
+  for (let i = urls.length - 1; i >= 0; i--) {
+    try {
+      const tab = window.open(urls[i].url, "_blank");
+      if (tab) openedTabs.push(tab);
+    } catch {
+      // ignore errors
+    }
+  }
+
+  return openedTabs;
 }
 
+// Function to open selected sites from the dashboard
+function openSelected() {
+  if (!cleanedTerm) return showToast("Enter a search term first.");
+  if (!selectedSites.length) return showToast("Choose at least one site.");
+
+  // Close previous tabs if "replaceOpenTabs" is enabled
+  let replacedCount = 0;
+  if (replaceOpenTabs && openedSearchWindows.length) {
+    openedSearchWindows.forEach((tab) => {
+      try {
+        if (tab && !tab.closed) {
+          tab.close();
+          replacedCount += 1;
+        }
+      } catch {}
+    });
+  }
+
+  // Build URLs for the selected sites
+  const urls = SITE_CONFIG.filter((site) => selectedSites.includes(site.name))
+    .map((site) => ({
+      name: site.name,
+      url: site.buildUrl(cleanedTerm),
+    }));
+
+  // Open the tabs
+  const newTabs = openUrlsInTabs(urls);
+
+  // Track opened tabs in state
+  setOpenedSearchWindows(newTabs);
+
+  // Update recent searches
+  setRecentSearches((current) =>
+    [cleanedTerm, ...current.filter((item) => item !== cleanedTerm)].slice(0, 8)
+  );
+
+  // Show feedback
+  if (!newTabs.length) {
+    return showToast(
+      "Your browser blocked the tabs. Allow pop-ups for smoother searching."
+    );
+  }
+
+  showToast(
+    replacedCount > 0
+      ? `Opened ${newTabs.length} site(s). Replaced ${replacedCount} previous tab${
+          replacedCount === 1 ? "" : "s"
+        }.`
+      : `Opened ${newTabs.length} site${newTabs.length === 1 ? "" : "s"}.`
+  );
+
+  // Focus the search input again
+  window.requestAnimationFrame(() => searchInputRef.current?.focus());
+}
+
+  return openedTabs;
+}
+
+  return openedTabs;
+}
 function LogoMark() {
   return (
     <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-400 text-slate-950 shadow-lg shadow-emerald-500/20">
@@ -717,9 +781,13 @@ function Hero() {
               ))}
             </div>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <button className="rounded-2xl bg-emerald-400 px-4 py-3 font-semibold text-slate-950">
-                Open Selected Sites
-              </button>
+             <button
+  type="button"
+  onClick={openSelected} // <-- connect your function here
+  className="rounded-2xl bg-emerald-400 px-4 py-3 font-semibold text-slate-950"
+>
+  Open Selected Sites
+</button>
               <button className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 font-semibold text-white">
                 Save Preset
               </button>
