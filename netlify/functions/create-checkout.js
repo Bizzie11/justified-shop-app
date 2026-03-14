@@ -15,50 +15,31 @@ exports.handler = async (event) => {
 
     let priceId = "";
 
-<<<<<<< HEAD
-    if (plan === "monthly") {
-  priceId = process.env.STRIPE_PRICE_PRO_MONTHLY;
-} else if (plan === "annual") {
-  priceId = process.env.STRIPE_PRICE_ANNUAL;
-}else {
-=======
     if (plan === "pro-monthly") {
       priceId = process.env.STRIPE_PRICE_PRO_MONTHLY;
     } else if (plan === "annual") {
       priceId = process.env.STRIPE_PRICE_ANNUAL;
     } else {
->>>>>>> 08b940da27fd93490575905771df0175d5cdb675
       return {
         statusCode: 400,
         body: JSON.stringify({ error: "Invalid plan selected" }),
       };
     }
 
-<<<<<<< HEAD
-    const session = await stripe.checkout.sessions.create({
-      mode: "subscription",
-      payment_method_types: ["card"],
-=======
     const baseUrl = process.env.URL || "https://justifiedshop.netlify.app";
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
->>>>>>> 08b940da27fd93490575905771df0175d5cdb675
+      payment_method_types: ["card"],
       line_items: [
         {
           price: priceId,
           quantity: 1,
         },
       ],
-<<<<<<< HEAD
-      success_url:
-        "https://justifiedshop.netlify.app/success?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: "https://justifiedshop.netlify.app/cancel",
-=======
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/cancel`,
       allow_promotion_codes: true,
->>>>>>> 08b940da27fd93490575905771df0175d5cdb675
     });
 
     return {
@@ -66,7 +47,8 @@ exports.handler = async (event) => {
       body: JSON.stringify({ url: session.url }),
     };
   } catch (error) {
-<<<<<<< HEAD
+    console.error("Stripe checkout error:", error);
+
     return {
       statusCode: 500,
       body: JSON.stringify({
@@ -75,15 +57,4 @@ exports.handler = async (event) => {
     };
   }
 };
-=======
-    console.error("Stripe checkout error:", error);
 
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: "Failed to create checkout session",
-      }),
-    };
-  }
-};
->>>>>>> 08b940da27fd93490575905771df0175d5cdb675
