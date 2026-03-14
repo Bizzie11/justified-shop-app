@@ -43,7 +43,7 @@ const SITE_CONFIG = [
   },
   {
     name: "eBay Sold",
-    free: false,
+    free: true,
     buildUrl: (term) =>
       `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(
         term
