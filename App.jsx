@@ -62,7 +62,7 @@ const SITE_CONFIG = [
 },
 ];
 
-const FREE_SITE_NAMES = SITE_CONFIG.filter((site) => site.free).map((site) => site.name);
+const FREE_SITE_NAMES = SITE_CONFIG.map((site) => site.name);
 
 const DEFAULT_PRESETS = [
   {
