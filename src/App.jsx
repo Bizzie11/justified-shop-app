@@ -28,45 +28,42 @@ const STORAGE_KEYS = {
 const SITE_CONFIG = [
   {
     name: "Amazon",
-    free: true,
+    tier: "free",
     buildUrl: (term) => `https://www.amazon.com/s?k=${encodeURIComponent(term)}`,
   },
   {
     name: "Walmart",
-    free: true,
+    tier: "free",
     buildUrl: (term) => `https://www.walmart.com/search?q=${encodeURIComponent(term)}`,
   },
   {
     name: "eBay",
-    free: true,
+    tier: "free",
     buildUrl: (term) => `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(term)}`,
   },
   {
     name: "eBay Sold",
-    free: false,
+    tier: "pro",
     buildUrl: (term) =>
       `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(
         term
       )}&LH_Sold=1&LH_Complete=1`,
   },
   {
-    name: "Home Depot",
-    free: true,
-    buildUrl: (term) => `https://www.homedepot.com/s/${encodeURIComponent(term)}`,
-  },
-  {
-    name: "Lowe's",
-    free: true,
-    buildUrl: (term) => `https://www.lowes.com/search?searchTerm=${encodeURIComponent(term)}`,
-  },
-  {
     name: "Google",
-    free: true,
+    tier: "free",
     buildUrl: (term) => `https://www.google.com/search?q=${encodeURIComponent(term)}`,
+  },
+  {
+    name: "Target",
+    tier: "free",
+    buildUrl: (term) => `https://www.target.com/s?searchTerm=${encodeURIComponent(term)}`,
   },
 ];
 
-const FREE_SITE_NAMES = SITE_CONFIG.filter((site) => site.free).map((site) => site.name);
+const FREE_SITE_NAMES = SITE_CONFIG
+  .filter((site) => site.tier === "free")
+  .map((site) => site.name);
 
 const DEFAULT_PRESETS = [
   {
@@ -79,14 +76,14 @@ const DEFAULT_PRESETS = [
   {
     id: "preset-hardware",
     name: "Hardware",
-    sites: ["Amazon", "Home Depot", "Lowe's", "Google"],
+    sites: ["Amazon", "Google"],
     isDefault: false,
     isSystem: true,
   },
   {
     id: "preset-plumbing",
     name: "Plumbing",
-    sites: ["Amazon", "Walmart", "Home Depot", "Google"],
+    sites: ["Amazon", "Walmart", "Google"],
     isDefault: false,
     isSystem: true,
   },
@@ -165,7 +162,29 @@ function writeStorage(key, value) {
     // ignore storage errors
   }
 }
+function canAccessSite(userPlan, site) {
+  if (userPlan === "owner") return true;
+  if (site.tier === "free") return true;
+  if (site.tier === "pro") return userPlan === "pro" || userPlan === "annual";
+  return false;
+}
+function getMockSnapshotData(searchTerm, selectedSites) {
+  if (!searchTerm.trim() || !selectedSites.length) return [];
 
+  const mockPriceMap = {
+    Amazon: "$24.99",
+    Walmart: "$21.88",
+    eBay: "$19.50",
+    "eBay Sold": "$22.40",
+    Google: "Search only",
+    Target: "No result",
+  };
+
+  return selectedSites.map((siteName) => ({
+    site: siteName,
+    price: mockPriceMap[siteName] || "No result",
+  }));
+}
 function createPresetId() {
   return `preset-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -227,7 +246,8 @@ function buildUrls(term, siteNames) {
 }
 
 function openUrlsInTabs(urls) {
-  return urls
+  return [...urls]
+    .reverse()
     .map((item) => {
       try {
         return window.open(item.url, "_blank");
@@ -274,7 +294,7 @@ function SiteCard({ name, selected, onClick, locked }) {
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-2xl border px-4 py-3 text-left transition duration-150",
+        "rounded-2xl border px-4 py-2 text-left transition duration-150",
         selected
           ? "border-emerald-400/50 bg-emerald-400/10 text-white"
           : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10"
@@ -306,30 +326,7 @@ function PresetManagerModal({
   const [draftId, setDraftId] = useState("");
   const [draftName, setDraftName] = useState("");
   const [draftSites, setDraftSites] = useState([]);
-const startCheckout = async (plan) => {
-  try {
-    const res = await fetch("/.netlify/functions/create-checkout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ plan }),
-    });
 
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Checkout failed");
-    }
-
-    if (data.url) {
-      window.location.href = data.url;
-    }
-  } catch (error) {
-    console.error("Checkout error:", error);
-    alert("Checkout failed. Please try again.");
-  }
-};
   useEffect(() => {
     if (!open) return;
     setDraftId("");
@@ -797,8 +794,11 @@ function DashboardPreview() {
     () => normalizePresets(readStorage(STORAGE_KEYS.presets, DEFAULT_PRESETS)),
     []
   );
+  const currentUser = {
+  plan: "owner",
+};
 
-  const [search, setSearch] = useState("Klein 11-in-1 screwdriver");
+  const [search, setSearch] = useState("");
   const searchInputRef = useRef(null);
   const [searchType, setSearchType] = useState("Exact Part #");
   const [presets, setPresets] = useState(initialPresets);
@@ -832,7 +832,38 @@ function DashboardPreview() {
     () => getPresetById(presets, selectedPresetId),
     [presets, selectedPresetId]
   );
+ const snapshotData = useMemo(
+  () => getMockSnapshotData(cleanedTerm, selectedSites),
+  [cleanedTerm, selectedSites]
+);
 
+const snapshotPrices = snapshotData
+  .map((item) => {
+    const raw = String(item.price).replace(/[^0-9.]/g, "");
+    if (!raw) return null;
+    const value = Number(raw);
+    return Number.isFinite(value) ? value : null;
+  })
+  .filter((value) => value !== null);
+
+const lowestPrice =
+  snapshotPrices.length > 0 ? `$${Math.min(...snapshotPrices).toFixed(2)}` : "—";
+
+   
+const highestPrice =
+  snapshotPrices.length > 0 ? `$${Math.max(...snapshotPrices).toFixed(2)}` : "—";
+
+const spreadPrice =
+  snapshotPrices.length > 1
+    ? `$${(Math.max(...snapshotPrices) - Math.min(...snapshotPrices)).toFixed(2)}`
+    : "—";
+const presetMatchesSelection = useMemo(() => {
+  if (!selectedPreset) return false;
+
+  if (selectedPreset.sites.length !== selectedSites.length) return false;
+
+  return selectedPreset.sites.every((site) => selectedSites.includes(site));
+}, [selectedPreset, selectedSites]);
   const showToast = (message) => {
     setToast(message);
     window.clearTimeout(showToast.timeoutId);
@@ -1031,7 +1062,53 @@ function DashboardPreview() {
                 </button>
               </div>
             </div>
+<div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+  <div className="flex items-start justify-between gap-3">
+    <div>
+      <p className="text-sm font-medium text-white">Quick Snapshot</p>
+      <p className="text-sm text-slate-400">Fast price check across marketplaces</p>
+    </div>
+    <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300">
+      Preview
+    </div>
+  </div>
 
+  <div className="mt-4 space-y-3">
+   {snapshotData.map((item) => (
+      <div
+        key={item.site}
+        className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3"
+      >
+        <span className="text-sm text-slate-300">{item.site}</span>
+        <span
+          className={cn(
+            "text-sm font-semibold",
+            item.price === "No result" ? "text-slate-500" : "text-white"
+          )}
+        >
+          {item.price}
+        </span>
+      </div>
+    ))}
+  </div>
+
+  <div className="mt-4 grid gap-3 sm:grid-cols-3">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
+      <p className="text-xs uppercase tracking-wide text-slate-500">Lowest found</p>
+      <p className="mt-1 text-lg font-semibold text-emerald-300">{lowestPrice}</p>
+    </div>
+
+    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
+      <p className="text-xs uppercase tracking-wide text-slate-500">Highest found</p>
+      <p className="mt-1 text-lg font-semibold text-white">{highestPrice}</p>
+    </div>
+
+    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
+      <p className="text-xs uppercase tracking-wide text-slate-500">Spread</p>
+      <p className="mt-1 text-lg font-semibold text-white">{spreadPrice}</p>
+    </div>
+  </div>
+</div>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <div>
                 <p className="mb-2 text-sm text-slate-400">Search type</p>
@@ -1086,7 +1163,7 @@ function DashboardPreview() {
 
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
               <div className="text-sm text-slate-400">
-                Active preset: <span className="text-slate-200">{selectedPreset?.name || "Custom"}</span>
+               Active preset: <span className="text-slate-200">{presetMatchesSelection ? selectedPreset?.name : "Custom"}</span>
               </div>
               <button
                 type="button"
@@ -1144,7 +1221,7 @@ function DashboardPreview() {
 
             <div className="mt-6">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-sm text-slate-400">Choose marketplaces</p>
+                <p className="text-sm text-slate-400">Marketplaces to check</p>
                 <div className="flex gap-2 text-sm">
                   <button
                     type="button"
@@ -1294,6 +1371,30 @@ function DashboardPreview() {
     </section>
   );
 }
+const startCheckout = async (plan) => {
+  try {
+    const res = await fetch("/.netlify/functions/create-checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ plan }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Checkout failed");
+    }
+
+    if (data.url) {
+      window.location.href = data.url;
+    }
+  } catch (error) {
+    console.error("Checkout error:", error);
+    alert("Checkout failed. Please try again.");
+  }
+};
 
 function Pricing() {
   return (
@@ -1337,12 +1438,10 @@ function Pricing() {
                 </li>
               ))}
             </ul>
-    
-              
-  <button
+    <button
   onClick={() => {
     if (tier.name === "Pro") startCheckout("pro-monthly")
-    else if (tier.name === "Annual") startCheckout("annual")
+    else if (tier.name === "Annual Plan") startCheckout("annual")
   }}
   className={cn(
     "mt-6 w-full rounded-2xl px-4 py-3 font-semibold",
@@ -1353,7 +1452,7 @@ function Pricing() {
 >
   {tier.cta}
 </button>
-         </div>
+          </div>
         ))}
       </div>
     </section>
@@ -1729,10 +1828,12 @@ export default function App() {
   if (pathname === "/billing") {
     return <BillingPage />;
   }
-  if (pathname === "/success") {
+if (pathname === "/success") {
   return <SuccessPage />;
 }
-
+  if (pathname === "/cancel") {
+  return <CancelPage />;
+}
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <Nav />
@@ -1744,21 +1845,44 @@ export default function App() {
       <Footer />
     </div>
   );
-}function SuccessPage() {
+}
+function SuccessPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
       <div className="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center shadow-xl">
-
         <h1 className="text-3xl font-bold text-emerald-400 mb-4">
           Payment Successful
         </h1>
-
         <p className="text-slate-300 text-lg mb-4">
           Thank you for subscribing to Justified Shop Pro.
         </p>
-
         <p className="text-slate-400 mb-8">
           Your subscription is now active.
+        </p>
+        <a
+          href="/"
+          className="inline-block bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold px-6 py-3 rounded-xl transition"
+        >
+          Return to Dashboard
+        </a>
+      </div>
+    </div>
+  );
+}
+function CancelPage() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
+      <div className="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center shadow-xl">
+        <h1 className="text-3xl font-bold text-red-400 mb-4">
+          Checkout Cancelled
+        </h1>
+
+        <p className="text-slate-300 text-lg mb-4">
+          No payment was made.
+        </p>
+
+        <p className="text-slate-400 mb-8">
+          You can come back anytime and subscribe when you're ready.
         </p>
 
         <a
@@ -1767,8 +1891,19 @@ export default function App() {
         >
           Return to Dashboard
         </a>
-
       </div>
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
