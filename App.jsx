@@ -325,19 +325,19 @@ function PresetManagerModal({
     setDraftSites([...preset.sites]);
   };
 
-  const toggleDraftSite = (site) => {
-    const locked = !site.free;
-    if (locked) {
-      showToast("eBay Sold stays part of the future paid plan.");
-      return;
-    }
+ const toggleDraftSite = (site) => {
+  const locked = !canAccessSite(userPlan, site);
+  if (locked) {
+    showToast("This marketplace is part of the paid plan.");
+    return;
+  }
 
-    setDraftSites((current) =>
-      current.includes(site.name)
-        ? current.filter((item) => item !== site.name)
-        : [...current, site.name]
-    );
-  };
+  setDraftSites((current) =>
+    current.includes(site.name)
+      ? current.filter((item) => item !== site.name)
+      : [...current, site.name]
+  );
+};
 
   const savePreset = () => {
     const name = draftName.trim();
@@ -480,17 +480,15 @@ function PresetManagerModal({
                 </button>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                {SITE_CONFIG.map((site) => (
-                  <SiteCard
-                    key={site.name}
-                    name={site.name}
-                    selected={draftSites.includes(site.name)}
-                    locked={!site.free}
-                    onClick={() => toggleDraftSite(site)}
-                  />
-                ))}
-              </div>
-            </div>
+{SITE_CONFIG.map((site) => (
+  <SiteCard
+    key={site.name}
+    name={site.name}
+    selected={draftSites.includes(site.name)}
+    locked={!canAccessSite(userPlan, site)}
+    onClick={() => toggleDraftSite(site)}
+  />
+))}
 
             <div className="mt-5 flex flex-wrap gap-3">
               <button
@@ -917,19 +915,18 @@ const presetMatchesSelection = useMemo(() => {
     setSelectedPresetId(nextPreset.id);
     setSelectedSites([...nextPreset.sites]);
   };
+const toggleSite = (site) => {
+  if (!canAccessSite(currentUser.plan, site)) {
+    setShowUpgrade(true);
+    return;
+  }
 
-  const toggleSite = (site) => {
-    if (!site.free) {
-      setShowUpgrade(true);
-      return;
-    }
-
-    setSelectedSites((current) =>
-      current.includes(site.name)
-        ? current.filter((item) => item !== site.name)
-        : [...current, site.name]
-    );
-  };
+  setSelectedSites((current) =>
+    current.includes(site.name)
+      ? current.filter((item) => item !== site.name)
+      : [...current, site.name]
+  );
+};
 
   const selectAllFree = () => setSelectedSites([...FREE_SITE_NAMES]);
   const clearAll = () => setSelectedSites([]);
@@ -1359,6 +1356,7 @@ if (replaceOpenTabs) {
           setSelectedSites={setSelectedSites}
           setPresets={setPresets}
           showToast={showToast}
+          userPlan={currentUser.plan}
         />
       </div>
     </section>
