@@ -1,6 +1,6 @@
-<<<<<<< HEAD
-npm install stripe
-=======
 [build]
-  functions = "netlify/functions"
->>>>>>> 08b940da27fd93490575905771df0175d5cdb675
+  command = "npm run build"
+  publish = "dist"
+
+[functions]
+  directory = "netlify/functions"
