@@ -294,11 +294,11 @@ function openSelected() {
   window.requestAnimationFrame(() => searchInputRef.current?.focus());
 }
 
-  return openedTabs;
-}
+  
 
-  return openedTabs;
-}
+
+
+
 function LogoMark() {
   return (
     <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-400 text-slate-950 shadow-lg shadow-emerald-500/20">
