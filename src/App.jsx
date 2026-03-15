@@ -1178,20 +1178,28 @@ const presetMatchesSelection = useMemo(() => {
                 </div>
               </div>
 
+<div className="mt-4">
+  <p className="mb-2 text-sm text-slate-400">Search type</p>
+  <div className="grid grid-cols-3 gap-2 md:max-w-md">
+    {["Exact Part #", "Broad", "UPC"].map((type) => (
+      <button
+        type="button"
+        key={type}
+        onClick={() => setSearchType(type)}
+        className={cn(
+          "rounded-2xl px-4 py-3 text-sm font-medium",
+          searchType === type
+            ? "bg-emerald-400 font-semibold text-slate-950"
+            : "border border-white/10 bg-white/5 text-slate-300"
+        )}
+      >
+        {type}
+      </button>
+    ))}
+  </div>
+</div>
 
 
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-              <div className="text-sm text-slate-400">
-               Active preset: <span className="text-slate-200">{presetMatchesSelection ? selectedPreset?.name : "Custom"}</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowPresetManager(true)}
-                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-300 hover:bg-white/10"
-              >
-                <Settings2 className="h-4 w-4" /> Manage Presets
-              </button>
-            </div>
 
             <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
