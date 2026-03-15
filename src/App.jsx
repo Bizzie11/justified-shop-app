@@ -866,7 +866,7 @@ function DashboardPreview() {
     return Array.isArray(saved) && saved.length ? saved.slice(0, 8) : DEFAULT_RECENT;
   });
   const [showUpgrade, setShowUpgrade] = useState(false);
-  const [showPresetManager, setShowPresetManager] = useState(false);
+ 
   const [replaceOpenTabs, setReplaceOpenTabs] = useState(true);
   const [openedSearchWindows, setOpenedSearchWindows] = useState([]);
   const [toast, setToast] = useState("");
