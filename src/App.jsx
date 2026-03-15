@@ -1328,34 +1328,7 @@ const presetMatchesSelection = useMemo(() => {
               </div>
             </div>
 
-            <div className="rounded-[32px] border border-white/10 bg-slate-950 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-400">Saved presets</p>
-                  <h3 className="text-xl font-semibold text-white">Fast workflows</h3>
-                </div>
-                <CheckCircle2 className="h-5 w-5 text-emerald-300" />
-              </div>
-              <div className="mt-4 space-y-3">
-                {presets.map((preset) => (
-                  <button
-                    type="button"
-                    key={preset.id}
-                    onClick={() => {
-                      setSelectedPresetId(preset.id);
-                      setSelectedSites([...preset.sites]);
-                    }}
-                    className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/10"
-                  >
-                    <span className="truncate pr-3">{preset.name}</span>
-                    <ExternalLink className="h-4 w-4 shrink-0 text-slate-500" />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
+  
         {toast ? (
           <div className="fixed bottom-6 right-6 z-40 rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white shadow-2xl shadow-black/30">
             {toast}
