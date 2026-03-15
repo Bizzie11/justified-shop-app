@@ -964,12 +964,7 @@ const presetMatchesSelection = useMemo(() => {
     return closedCount;
   };
 
-  const handlePresetChange = (event) => {
-    const nextPreset = getPresetById(presets, event.target.value);
-    if (!nextPreset) return;
-    setSelectedPresetId(nextPreset.id);
-    setSelectedSites([...nextPreset.sites]);
-  };
+
 
   const toggleSite = (site) => {
     if (!site.free) {
