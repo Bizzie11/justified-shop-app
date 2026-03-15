@@ -1178,35 +1178,7 @@ const presetMatchesSelection = useMemo(() => {
                 </div>
               </div>
 
-              <div>
-                <p className="mb-2 text-sm text-slate-400">Preset</p>
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <select
-                      value={selectedPresetId}
-                      onChange={handlePresetChange}
-                      className="w-full appearance-none rounded-2xl border border-white/10 bg-white/5 px-4 py-3 pr-10 text-sm text-white outline-none"
-                    >
-                      {presets.map((preset) => (
-                        <option key={preset.id} value={preset.id} className="bg-slate-900 text-white">
-                          {preset.name}
-                          {preset.isDefault ? " • Default" : ""}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={saveCurrentAsPreset}
-                    className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white hover:bg-white/10"
-                  >
-                    <Save className="h-4 w-4" />
-                    <span className="hidden sm:inline">Save Preset</span>
-                  </button>
-                </div>
-              </div>
-            </div>
+
 
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
               <div className="text-sm text-slate-400">
