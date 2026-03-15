@@ -1328,7 +1328,7 @@ const presetMatchesSelection = useMemo(() => {
          </div>
       </div>
     </div>
-
+</div>
       {toast ? (
           <div className="fixed bottom-6 right-6 z-40 rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white shadow-2xl shadow-black/30">
             {toast}
