@@ -849,18 +849,11 @@ function DashboardPreview() {
   const searchInputRef = useRef(null);
   const [searchType, setSearchType] = useState("Exact Part #");
   const [presets, setPresets] = useState(initialPresets);
-  const [selectedPresetId, setSelectedPresetId] = useState(() =>
-    mergeSelectedPresetId(readStorage(STORAGE_KEYS.selectedPresetId, ""), initialPresets)
-  );
-  const [selectedSites, setSelectedSites] = useState(() => {
-    const saved = readStorage(STORAGE_KEYS.selectedSites, null);
-    if (Array.isArray(saved) && saved.length > 0) return saved;
-    const activePresetId = mergeSelectedPresetId(
-      readStorage(STORAGE_KEYS.selectedPresetId, ""),
-      initialPresets
-    );
-    return getPresetById(initialPresets, activePresetId)?.sites || [];
-  });
+
+const [selectedSites, setSelectedSites] = useState(() => {
+  const saved = readStorage(STORAGE_KEYS.selectedSites, null);
+  return Array.isArray(saved) && saved.length > 0 ? saved : ["Amazon", "Walmart", "eBay"];
+});
   const [recentSearches, setRecentSearches] = useState(() => {
     const saved = readStorage(STORAGE_KEYS.recentSearches, null);
     return Array.isArray(saved) && saved.length ? saved.slice(0, 8) : DEFAULT_RECENT;
