@@ -1615,9 +1615,13 @@ function UpgradeModal({ onClose }) {
               <p className="mt-4 text-4xl font-bold text-white">
                 $29<span className="text-lg font-medium text-slate-400">/mo</span>
               </p>
-              <button className="mt-5 w-full rounded-2xl bg-emerald-400 px-5 py-3.5 font-semibold text-slate-950">
-                Start Pro
-              </button>
+<button
+  onClick={() => startCheckout("pro-monthly")}
+  className="mt-5 w-full rounded-2xl bg-emerald-400 px-5 py-3.5 font-semibold text-slate-950"
+>
+  Start Pro
+</button>
+
             </div>
 
             <div className="rounded-[28px] border border-white/10 bg-white/5 p-5">
@@ -1633,9 +1637,13 @@ function UpgradeModal({ onClose }) {
               <p className="mt-4 text-4xl font-bold text-white">
                 $239<span className="text-lg font-medium text-slate-400"> / year</span>
               </p>
-              <button className="mt-5 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 font-semibold text-white">
-                Choose Annual Plan
-              </button>
+              <button
+  onClick={() => startCheckout("annual")}
+  className="mt-5 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 font-semibold text-white"
+>
+  Choose Annual Plan
+</button>
+
             </div>
           </div>
         </div>
