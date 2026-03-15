@@ -868,10 +868,7 @@ const [selectedSites, setSelectedSites] = useState(() => {
 
   const selectedCount = useMemo(() => selectedSites.length, [selectedSites]);
   const cleanedTerm = useMemo(() => cleanSearchTerm(search, searchType), [search, searchType]);
-  const selectedPreset = useMemo(
-    () => getPresetById(presets, selectedPresetId),
-    [presets, selectedPresetId]
-  );
+ 
   const mockSnapshot = [
   { site: "Amazon", price: "$24.99" },
   { site: "Walmart", price: "$21.88" },
@@ -897,13 +894,7 @@ const spreadPrice =
   snapshotPrices.length > 1
     ? `$${(Math.max(...snapshotPrices) - Math.min(...snapshotPrices)).toFixed(2)}`
     : "—";
-const presetMatchesSelection = useMemo(() => {
-  if (!selectedPreset) return false;
 
-  if (selectedPreset.sites.length !== selectedSites.length) return false;
-
-  return selectedPreset.sites.every((site) => selectedSites.includes(site));
-}, [selectedPreset, selectedSites]);
   const showToast = (message) => {
     setToast(message);
     window.clearTimeout(showToast.timeoutId);
@@ -914,9 +905,7 @@ const presetMatchesSelection = useMemo(() => {
     writeStorage(STORAGE_KEYS.presets, presets);
   }, [presets]);
 
-  useEffect(() => {
-    writeStorage(STORAGE_KEYS.selectedPresetId, selectedPresetId);
-  }, [selectedPresetId]);
+
 
   useEffect(() => {
     writeStorage(STORAGE_KEYS.selectedSites, selectedSites);
@@ -926,13 +915,7 @@ const presetMatchesSelection = useMemo(() => {
     writeStorage(STORAGE_KEYS.recentSearches, recentSearches);
   }, [recentSearches]);
 
-  useEffect(() => {
-    const mergedId = mergeSelectedPresetId(selectedPresetId, presets);
-    if (mergedId !== selectedPresetId) {
-      setSelectedPresetId(mergedId);
-      setSelectedSites(getPresetById(presets, mergedId)?.sites || []);
-    }
-  }, [presets, selectedPresetId]);
+
 
   useEffect(() => {
     searchInputRef.current?.focus();
