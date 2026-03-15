@@ -1336,17 +1336,7 @@ const presetMatchesSelection = useMemo(() => {
         ) : null}
 
         {showUpgrade ? <UpgradeModal onClose={() => setShowUpgrade(false)} /> : null}
-        <PresetManagerModal
-          open={showPresetManager}
-          onClose={() => setShowPresetManager(false)}
-          presets={presets}
-          selectedPresetId={selectedPresetId}
-          selectedSites={selectedSites}
-          setSelectedPresetId={setSelectedPresetId}
-          setSelectedSites={setSelectedSites}
-          setPresets={setPresets}
-          showToast={showToast}
-        />
+     
       </div>
     </section>
   );
