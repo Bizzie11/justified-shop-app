@@ -1083,13 +1083,40 @@ const spreadPrice =
 <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
   <div className="flex items-start justify-between gap-3">
     <div>
-      <p className="text-sm font-medium text-white">Quick Snapshot</p>
-      <p className="text-sm text-slate-400">Fast price check across marketplaces</p>
+      <p className="text-sm font-medium text-white">Search Summary</p>
+      <p className="text-sm text-slate-400">A clean overview of your current search</p>
     </div>
     <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300">
-      Preview
+      Live
     </div>
   </div>
+
+  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
+      <p className="text-xs uppercase tracking-wide text-slate-500">Search Term</p>
+      <p className="mt-1 text-sm font-medium text-white break-words">
+        {cleanedTerm || "No search entered yet"}
+      </p>
+    </div>
+
+    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
+      <p className="text-xs uppercase tracking-wide text-slate-500">Search Type</p>
+      <p className="mt-1 text-sm font-medium text-white">{searchType}</p>
+    </div>
+
+    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
+      <p className="text-xs uppercase tracking-wide text-slate-500">Sites Selected</p>
+      <p className="mt-1 text-sm font-medium text-white">
+        {selectedCount} marketplace{selectedCount === 1 ? "" : "s"}
+      </p>
+    </div>
+
+    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
+      <p className="text-xs uppercase tracking-wide text-slate-500">Tracked Open Tabs</p>
+      <p className="mt-1 text-sm font-medium text-white">{activeTrackedTabs}</p>
+    </div>
+  </div>
+</div>
 
   <div className="mt-4 space-y-3">
     {mockSnapshot.map((item) => (
