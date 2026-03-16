@@ -1178,7 +1178,7 @@ const spreadPrice =
 
               <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm">
                 <span className="text-slate-400">
-                  Tracked open search tabs: <span className="text-slate-200">{activeTrackedTabs}</span>
+                  Tabs opened last search: <span className="text-slate-200">{activeTrackedTabs}</span>
                 </span>
                 <button
                   type="button"
