@@ -1120,24 +1120,6 @@ const spreadPrice =
 
 
 
-  <div className="mt-4 grid gap-3 sm:grid-cols-3">
-    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
-      <p className="text-xs uppercase tracking-wide text-slate-500">Lowest found</p>
-      <p className="mt-1 text-lg font-semibold text-emerald-300">{lowestPrice}</p>
-    </div>
-
-    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
-      <p className="text-xs uppercase tracking-wide text-slate-500">Highest found</p>
-      <p className="mt-1 text-lg font-semibold text-white">{highestPrice}</p>
-    </div>
-
-    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
-      <p className="text-xs uppercase tracking-wide text-slate-500">Spread</p>
-      <p className="mt-1 text-lg font-semibold text-white">{spreadPrice}</p>
-    </div>
-  </div>
-</div>
-
 
 <div className="mt-4">
   <p className="mb-2 text-sm text-slate-400">Search type</p>
