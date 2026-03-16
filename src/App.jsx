@@ -209,8 +209,8 @@ function cleanSearchTerm(value, searchType) {
   if (searchType === "Exact Part #") return noExtraSpaces;
 
   return noExtraSpaces
-    .replace(/["']/g, "")
-    .replace(/[^a-zA-Z0-9\-\s]/g, " ")
+    .replace(/[']/g, "")
+    .replace(/[^a-zA-Z0-9\-\s"]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
