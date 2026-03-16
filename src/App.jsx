@@ -56,9 +56,9 @@ const SITE_CONFIG = [
 },
 
 {
-  name: "Target",
+  name: "Home Depot",
   free: true,
-  buildUrl: (term) => `https://www.target.com/s?searchTerm=${encodeURIComponent(term)}`,
+  buildUrl: (term) => `https://www.homedepot.com/s/${encodeURIComponent(term)}`,
 },
 ];
 
