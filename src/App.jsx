@@ -247,6 +247,7 @@ function openUrlsInTabs(urls) {
 // Function to open selected sites from the dashboard
 function openSelected() {
   if (!cleanedTerm) return showToast("Enter a search term first.");
+ navigator.clipboard.writeText(cleanedTerm);
   if (!selectedSites.length) return showToast("Choose at least one site.");
 
   // Close previous tabs if "replaceOpenTabs" is enabled
