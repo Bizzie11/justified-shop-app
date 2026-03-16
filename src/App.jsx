@@ -1235,7 +1235,7 @@ const spreadPrice =
                 onClick={openAll}
                 className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 font-semibold text-white"
               >
-                Open All
+Search All Marketplaces
               </button>
               <button
                 type="button"
