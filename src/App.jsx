@@ -918,9 +918,23 @@ const spreadPrice =
 
 
 
-  useEffect(() => {
-    searchInputRef.current?.focus();
-  }, []);
+useEffect(() => {
+  searchInputRef.current?.focus();
+}, []);
+
+useEffect(() => {
+  const trimmed = search.trim();
+
+  if (!trimmed) return;
+
+  if (/^\d{12,14}$/.test(trimmed)) {
+    setSearchType("UPC");
+  } else if (trimmed.includes(" ")) {
+    setSearchType("Broad");
+  } else {
+    setSearchType("Exact Part #");
+  }
+}, [search]);
 
   const closeTrackedTabs = () => {
     if (!openedSearchWindows.length) return 0;
@@ -1054,21 +1068,7 @@ const spreadPrice =
                 <input
                   ref={searchInputRef}
                   value={search}
-             onChange={(e) => {
-  const value = e.target.value;
-  setSearch(value);
-
-  const trimmed = value.trim();
-  if (!trimmed) return;
-
-  if (/^\d{12,14}$/.test(trimmed)) {
-    setSearchType("UPC");
-  } else if (trimmed.includes(" ")) {
-    setSearchType("Broad");
-  } else {
-    setSearchType("Exact Part #");
-  }
-}}
+onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && openSelected()}
                   className="w-full bg-transparent text-lg text-white outline-none placeholder:text-slate-500"
                   placeholder="Paste product name, model number, or UPC"
