@@ -1054,7 +1054,21 @@ const spreadPrice =
                 <input
                   ref={searchInputRef}
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+             onChange={(e) => {
+  const value = e.target.value;
+  setSearch(value);
+
+  const trimmed = value.trim();
+  if (!trimmed) return;
+
+  if (/^\d{12,14}$/.test(trimmed)) {
+    setSearchType("UPC");
+  } else if (trimmed.includes(" ")) {
+    setSearchType("Broad");
+  } else {
+    setSearchType("Exact Part #");
+  }
+}}
                   onKeyDown={(e) => e.key === "Enter" && openSelected()}
                   className="w-full bg-transparent text-lg text-white outline-none placeholder:text-slate-500"
                   placeholder="Paste product name, model number, or UPC"
