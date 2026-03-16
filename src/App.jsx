@@ -107,7 +107,7 @@ const pricing = [
     name: "Free",
     price: "$0",
     desc: "Try the workflow before upgrading.",
-    items: ["Core marketplaces", "Open selected sites", "Test the workflow first"],
+    items: ["Core marketplaces", "Search selected marketplaces", "Test the workflow first"],
     cta: "Start Free",
   },
   {
@@ -1228,7 +1228,7 @@ const spreadPrice =
                 onClick={openSelected}
                 className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-400 px-5 py-3.5 font-semibold text-slate-950"
               >
-                <ExternalLink className="h-4 w-4" /> Open Selected Sites
+             <ExternalLink className="h-4 w-4" /> Search Selected Marketplaces
               </button>
               <button
                 type="button"
