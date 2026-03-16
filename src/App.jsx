@@ -1118,24 +1118,7 @@ const spreadPrice =
   </div>
 </div>
 
-  <div className="mt-4 space-y-3">
-    {mockSnapshot.map((item) => (
-      <div
-        key={item.site}
-        className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3"
-      >
-        <span className="text-sm text-slate-300">{item.site}</span>
-        <span
-          className={cn(
-            "text-sm font-semibold",
-            item.price === "No result" ? "text-slate-500" : "text-white"
-          )}
-        >
-          {item.price}
-        </span>
-      </div>
-    ))}
-  </div>
+
 
   <div className="mt-4 grid gap-3 sm:grid-cols-3">
     <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
