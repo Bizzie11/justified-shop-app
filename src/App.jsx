@@ -1288,7 +1288,8 @@ Search All Marketplaces
                   ? "Starter examples to help new users test the workflow."
                   : "Your latest searches stay saved in this browser for quick repeat checks."}
               </p>
-
+<div className="mt-4 space-y-3">
+  {recentSearches.map((item) => (
             <button
   type="button"
   key={item}
