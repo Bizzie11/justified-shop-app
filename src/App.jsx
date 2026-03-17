@@ -1280,8 +1280,23 @@ Search All Marketplaces
                     {showingExampleSearches ? "Try one of these" : "Jump back in"}
                   </h3>
                 </div>
-                <Clock3 className="h-5 w-5 text-slate-500" />
               </div>
+              <div className="flex items-center gap-2">
+  {recentSearches.length > 0 && (
+    <button
+      onClick={() => {
+        setRecentSearches([]);
+        localStorage.removeItem("recentSearches");
+        showToast("Recent searches cleared.");
+      }}
+      className="text-xs text-slate-400 hover:text-white transition"
+    >
+      Clear
+    </button>
+  )}
+
+  <Clock3 className="h-5 w-5 text-slate-500" />
+</div>
 
               <p className="mt-3 text-sm text-slate-400">
                 {showingExampleSearches
