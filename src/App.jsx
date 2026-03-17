@@ -1043,7 +1043,7 @@ useEffect(() => {
         <SectionTitle
           eyebrow="Main dashboard"
           title="Search once. Check every marketplace instantly."
-          text="Paste a product name, model number, or UPC and instantly open results across every marketplace you select."
+          text="Enter a product name, model number, or UPC and instantly open results across every marketplace you select."
         />
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
