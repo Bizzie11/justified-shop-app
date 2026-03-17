@@ -1067,7 +1067,7 @@ useEffect(() => {
 onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && openSelected()}
                   className="w-full bg-transparent text-lg text-white outline-none placeholder:text-slate-500"
-                  placeholder="Paste product name, model number, or UPC"
+                  placeholder="Enter a product name, model number, or UPC"
                 />
                 {search ? (
                   <button
