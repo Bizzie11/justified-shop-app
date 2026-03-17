@@ -1300,7 +1300,7 @@ Search All Marketplaces
 
               <p className="mt-3 text-sm text-slate-400">
                 {showingExampleSearches
-                  ? "Starter examples to help new users test the workflow."
+                  ? "Use a starter search to see how Justified Shop works."
                   : "Your latest searches stay saved in this browser for quick repeat checks."}
               </p>
 <p className="text-xs text-slate-500 mb-2">
