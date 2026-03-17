@@ -787,23 +787,16 @@ function Hero() {
               ))}
             </div>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-             <button
+<button
   type="button"
-  onClick={openSelected} // <-- connect your function here
-  className="rounded-2xl bg-emerald-400 px-4 py-3 font-semibold text-slate-950"
+  onClick={openSelected}
+  disabled={!search?.trim()}
+  className={`rounded-2xl bg-emerald-400 px-4 py-3 font-semibold text-slate-950 ${
+    !search?.trim() ? "opacity-50 cursor-not-allowed" : ""
+  }`}
 >
   Open Selected Sites
 </button>
-              <button className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 font-semibold text-white">
-                Save Preset
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function Features() {
   const items = [
