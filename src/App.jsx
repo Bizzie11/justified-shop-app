@@ -245,6 +245,9 @@ function openUrlsInTabs(urls) {
 
 
 // Function to open selected sites from the dashboard
+function getTodayDate() {
+  return new Date().toISOString().split("T")[0];
+}
 function openSelected() {
   if (!cleanedTerm) return showToast("Enter a search term first.");
  navigator.clipboard.writeText(cleanedTerm);
