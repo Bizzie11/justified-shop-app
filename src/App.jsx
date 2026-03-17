@@ -254,7 +254,7 @@ function openSelected() {
   if (!selectedSites.length) return showToast("Choose at least one site.");
   if (planType === "free") {
     const today = getTodayDate();
-    alert("OPENSELECTED RUNNING");
+    
     let currentCount = searchCountToday;
     let currentDate = lastSearchDate;
 
@@ -1111,7 +1111,7 @@ onChange={(e) => setSearch(e.target.value)}
 onClick={async () => {
   setIsOpening(true);
   try {
-    alert("BUTTON CLICK TEST");
+    
     await openSelected();
   } finally {
     setTimeout(() => setIsOpening(false), 1200);
@@ -1119,7 +1119,7 @@ onClick={async () => {
 }}
                   className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/10 transition hover:bg-emerald-300"
                 >
-                  {isOpening ? "Opening..." : "Open Results TEST"}
+                  {isOpening ? "Opening..." : "Open Results"}
                 </button>
               </div>
             </div>
