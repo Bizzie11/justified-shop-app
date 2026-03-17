@@ -1111,6 +1111,7 @@ onChange={(e) => setSearch(e.target.value)}
 onClick={async () => {
   setIsOpening(true);
   try {
+    alert("BUTTON CLICK TEST");
     await openSelected();
   } finally {
     setTimeout(() => setIsOpening(false), 1200);
