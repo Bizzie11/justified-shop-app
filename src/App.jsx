@@ -275,12 +275,11 @@ if (planType === "free") {
   localStorage.setItem("js_search_date", today);
   localStorage.setItem("js_search_count", String(nextCount));
 
-  setSearchCountToday(nextCount);
-  setLastSearchDate(today);
-    
+ setSearchCountToday(nextCount);
+setLastSearchDate(today);
+}
 
 navigator.clipboard.writeText(cleanedTerm);
-  }
   // Close previous tabs if "replaceOpenTabs" is enabled
   let replacedCount = 0;
   if (replaceOpenTabs && openedSearchWindows.length) {
