@@ -265,9 +265,10 @@ function openSelected() {
       setLastSearchDate(today);
     }
 
-    if (currentCount >= 5) {
-      return showToast("Free limit reached. Upgrade to Pro.");
-    }
+  if (currentCount >= 5) {
+  showToast("Free limit reached. Upgrade to Pro.");
+  return;
+}
 
     setSearchCountToday(currentCount + 1);
     setLastSearchDate(today);
