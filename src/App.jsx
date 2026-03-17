@@ -248,38 +248,31 @@ function openUrlsInTabs(urls) {
 function getTodayDate() {
   return new Date().toISOString().split("T")[0];
 }
-
+function openSelected() {
   if (!cleanedTerm) return showToast("Enter a search term first.");
  navigator.clipboard.writeText(cleanedTerm);
   if (!selectedSites.length) return showToast("Choose at least one site.");
-if (planType === "free") {
-  const today = getTodayDate();
-  const storedDate = localStorage.getItem("js_search_date") || "";
-  const storedCount = Number(localStorage.getItem("js_search_count") || "0");
+  if (planType === "free") {
+    const today = getTodayDate();
+    
+    let currentCount = searchCountToday;
+    let currentDate = lastSearchDate;
 
-  let currentCount = storedCount;
-  let currentDate = storedDate;
-
-  if (currentDate !== today) {
-    currentCount = 0;
-    currentDate = today;
-  }
+    if (currentDate !== today) {
+      currentCount = 0;
+      currentDate = today;
+      setSearchCountToday(0);
+      setLastSearchDate(today);
+    }
 
   if (currentCount >= 5) {
-    showToast("Free limit reached. Upgrade to Pro.");
-    return;
-  }
-
-  const nextCount = currentCount + 1;
-
-  localStorage.setItem("js_search_date", today);
-  localStorage.setItem("js_search_count", String(nextCount));
-
- setSearchCountToday(nextCount);
-setLastSearchDate(today);
+  showToast("Free limit reached. Upgrade to Pro.");
+  return;
 }
 
-navigator.clipboard.writeText(cleanedTerm);
+    setSearchCountToday(currentCount + 1);
+    setLastSearchDate(today);
+  }
   // Close previous tabs if "replaceOpenTabs" is enabled
   let replacedCount = 0;
   if (replaceOpenTabs && openedSearchWindows.length) {
