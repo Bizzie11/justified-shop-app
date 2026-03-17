@@ -266,7 +266,7 @@ function openSelected() {
     }
 
   if (currentCount >= 5) {
-  showToast("Free limit reached. Upgrade to Pro.");
+  showToast("You’ve reached your 5 free searches for today. Upgrade to Pro for unlimited searches.");
   return;
 }
 
