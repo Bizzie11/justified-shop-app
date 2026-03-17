@@ -1288,6 +1288,9 @@ Search All Marketplaces
                   ? "Starter examples to help new users test the workflow."
                   : "Your latest searches stay saved in this browser for quick repeat checks."}
               </p>
+<p className="text-xs text-slate-500 mb-2">
+  Click to load • Double-click to search
+</p>              
 <div className="mt-4 space-y-3">
   {recentSearches.map((item) => (
             <button
