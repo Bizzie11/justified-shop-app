@@ -790,10 +790,7 @@ function Hero() {
 <button
   type="button"
   onClick={openSelected}
-  disabled={!search?.trim()}
-  className={`rounded-2xl bg-emerald-400 px-4 py-3 font-semibold text-slate-950 ${
-    !search?.trim() ? "opacity-50 cursor-not-allowed" : ""
-  }`}
+  className="rounded-2xl bg-emerald-400 px-4 py-3 font-semibold text-slate-950"
 >
   Open Selected Sites
 </button>
