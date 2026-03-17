@@ -252,7 +252,26 @@ function openSelected() {
   if (!cleanedTerm) return showToast("Enter a search term first.");
  navigator.clipboard.writeText(cleanedTerm);
   if (!selectedSites.length) return showToast("Choose at least one site.");
+  if (planType === "free") {
+    const today = getTodayDate();
 
+    let currentCount = searchCountToday;
+    let currentDate = lastSearchDate;
+
+    if (currentDate !== today) {
+      currentCount = 0;
+      currentDate = today;
+      setSearchCountToday(0);
+      setLastSearchDate(today);
+    }
+
+    if (currentCount >= 5) {
+      return showToast("Free limit reached. Upgrade to Pro.");
+    }
+
+    setSearchCountToday(currentCount + 1);
+    setLastSearchDate(today);
+  }
   // Close previous tabs if "replaceOpenTabs" is enabled
   let replacedCount = 0;
   if (replaceOpenTabs && openedSearchWindows.length) {
