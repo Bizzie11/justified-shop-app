@@ -1110,7 +1110,7 @@ onChange={(e) => setSearch(e.target.value)}
     <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
       <p className="text-xs uppercase tracking-wide text-slate-500">Search Term</p>
       <p className="mt-1 text-sm font-medium text-white break-words">
-        {cleanedTerm || "No search entered yet"}
+        {cleanedTerm || "No search yet — try an example or paste a product above."}
       </p>
     </div>
 
