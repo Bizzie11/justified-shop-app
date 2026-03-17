@@ -1088,7 +1088,7 @@ onClick={async () => {
   try {
     await openSelected();
   } finally {
-    setIsOpening(false);
+    setTimeout(() => setIsOpening(false), 1200);
   }
 }}
                   className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/10 transition hover:bg-emerald-300"
