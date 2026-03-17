@@ -1047,7 +1047,7 @@ useEffect(() => {
         <SectionTitle
           eyebrow="Main dashboard"
           title="Search once. Check every marketplace instantly."
-          text="Paste a product name, model number, or UPC and instantly open results across Amazon, Walmart, eBay, Home Depot, Lowe's, Google and more."
+          text="Paste a product name, model number, or UPC and instantly open results across your selected marketplaces."
         />
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
