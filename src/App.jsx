@@ -727,9 +727,7 @@ function Hero() {
             Search Faster. Source Smarter.
           </p>
           <p className="mt-4 max-w-xl text-base leading-7 text-slate-300">
-            Instantly open product searches across Amazon, Walmart, eBay, eBay Sold,
-            Home Depot, Lowe&apos;s, Google, and more from one clean workflow built for
-            resellers.
+           Instantly open product searches across your selected marketplaces from one clean workflow built for resellers.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <a
