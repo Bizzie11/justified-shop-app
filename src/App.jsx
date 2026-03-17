@@ -841,6 +841,7 @@ function DashboardPreview() {
   );
 
   const [search, setSearch] = useState("");
+  const [isOpening, setIsOpening] = useState(false);
   const searchInputRef = useRef(null);
   const [searchType, setSearchType] = useState("Exact Part #");
   const [presets, setPresets] = useState(initialPresets);
@@ -1082,10 +1083,17 @@ onChange={(e) => setSearch(e.target.value)}
                 ) : null}
                 <button
                   type="button"
-                  onClick={openSelected}
+onClick={async () => {
+  setIsOpening(true);
+  try {
+    await openSelected();
+  } finally {
+    setIsOpening(false);
+  }
+}}
                   className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/10 transition hover:bg-emerald-300"
                 >
-                  Open Results
+                  {isOpening ? "Opening..." : "Open Results"}
                 </button>
               </div>
             </div>
