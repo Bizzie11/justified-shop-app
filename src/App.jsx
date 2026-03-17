@@ -797,7 +797,12 @@ function Hero() {
 >
   Open Selected Sites
 </button>
-
+</div>
+</div>
+</div>
+</section>
+);
+}
 function Features() {
   const items = [
     {
