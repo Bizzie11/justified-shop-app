@@ -1354,7 +1354,7 @@ Search All Marketplaces
         : `Opened ${selectedSites.length} site${selectedSites.length === 1 ? "" : "s"} from recent search.`
     );
   }}
-                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/10"
+                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/10 hover:border-white/20 transition cursor-pointer active:scale-[0.98]"
                   >
                     {item}
                   </button>
