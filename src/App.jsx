@@ -254,7 +254,7 @@ function openSelected() {
   if (!selectedSites.length) return showToast("Choose at least one site.");
   if (planType === "free") {
     const today = getTodayDate();
-
+showToast(`Plan: ${planType} | Count: ${searchCountToday} | Date: ${lastSearchDate}`);
     let currentCount = searchCountToday;
     let currentDate = lastSearchDate;
 
