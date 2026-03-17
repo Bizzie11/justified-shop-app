@@ -373,7 +373,10 @@ function PresetManagerModal({
   const [draftId, setDraftId] = useState("");
   const [draftName, setDraftName] = useState("");
   const [draftSites, setDraftSites] = useState([]);
-
+const [planType, setPlanType] = useState("free");
+const [searchCountToday, setSearchCountToday] = useState(0);
+const [lastSearchDate, setLastSearchDate] = useState("");
+const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   useEffect(() => {
     if (!open) return;
     setDraftId("");
