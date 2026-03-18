@@ -253,7 +253,7 @@ function openSelected() {
  
   if (!selectedSites.length) return showToast("Choose at least one site.");
   if (planType === "free") {
-    localStorage.setItem("js_search_probe", "entered");
+   alert("FREE BLOCK ENTERED");
     const today = getTodayDate();
     
   const storedDate = localStorage.getItem("js_search_date") || "";
