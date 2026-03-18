@@ -250,7 +250,7 @@ function getTodayDate() {
 }
 function openSelected() {
   if (!cleanedTerm) return showToast("Enter a search term first.");
- navigator.clipboard.writeText(cleanedTerm);
+ 
   if (!selectedSites.length) return showToast("Choose at least one site.");
   if (planType === "free") {
     const today = getTodayDate();
@@ -267,6 +267,7 @@ let currentDate = storedDate;
       setSearchCountToday(0);
       setLastSearchDate(today);
     }
+ 
 
   if (currentCount >= 5) {
   showToast("You’ve reached your 5 free searches for today. Upgrade to Pro for unlimited searches.");
@@ -279,6 +280,8 @@ localStorage.setItem("js_search_count", String(nextCount));
 setSearchCountToday(nextCount);
 setLastSearchDate(today);
   }
+  navigator.clipboard.writeText(cleanedTerm);
+  
   // Close previous tabs if "replaceOpenTabs" is enabled
   let replacedCount = 0;
   if (replaceOpenTabs && openedSearchWindows.length) {
