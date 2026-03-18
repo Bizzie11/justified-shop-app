@@ -1139,7 +1139,7 @@ onClick={async () => {
   <div className="flex items-start justify-between gap-3">
     <div>
       <p className="text-sm font-medium text-white">Search Summary</p>
-<p className="text-sm text-slate-400">A clean overview of your current search · Free searches used today: {searchCountToday || 0} / 5</p>
+<p className="text-sm text-slate-400">A clean overview of your current search</p>
   
     </div>
     <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300">
