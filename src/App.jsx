@@ -255,8 +255,11 @@ function openSelected() {
   if (planType === "free") {
     const today = getTodayDate();
     
-    let currentCount = searchCountToday;
-    let currentDate = lastSearchDate;
+  const storedDate = localStorage.getItem("js_search_date") || "";
+const storedCount = Number(localStorage.getItem("js_search_count") || "0");
+
+let currentCount = storedCount;
+let currentDate = storedDate;
 
     if (currentDate !== today) {
       currentCount = 0;
