@@ -273,8 +273,11 @@ let currentDate = storedDate;
   return;
 }
 
-    setSearchCountToday(currentCount + 1);
-    setLastSearchDate(today);
+   const nextCount = currentCount + 1;
+localStorage.setItem("js_search_date", today);
+localStorage.setItem("js_search_count", String(nextCount));
+setSearchCountToday(nextCount);
+setLastSearchDate(today);
   }
   // Close previous tabs if "replaceOpenTabs" is enabled
   let replacedCount = 0;
