@@ -249,12 +249,12 @@ function getTodayDate() {
   return new Date().toISOString().split("T")[0];
 }
 function openSelected() {
-  alert("planType = " + planType);
+
   if (!cleanedTerm) return showToast("Enter a search term first.");
  
   if (!selectedSites.length) return showToast("Choose at least one site.");
   if (planType === "free") {
-   alert("FREE BLOCK ENTERED");
+  
     const today = getTodayDate();
     
   const storedDate = localStorage.getItem("js_search_date") || "";
