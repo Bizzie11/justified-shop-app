@@ -915,7 +915,26 @@ const [selectedSites, setSelectedSites] = useState(() => {
   const [toast, setToast] = useState("");
   const activeTrackedTabs = openedSearchWindows.filter((tab) => tab && !tab.closed).length;
   const showingExampleSearches = recentSearches.every((item) => DEFAULT_RECENT.includes(item));
+const [searchCountToday, setSearchCountToday] = useState(() => {
+return Number(localStorage.getItem("js_search_count") || "0");
+});
 
+const [lastSearchDate, setLastSearchDate] = useState(() => {
+  return localStorage.getItem("js_search_date") || "";
+});
+  useEffect(() => {
+  const today = new Date().toISOString().split("T")[0];
+
+  if (lastSearchDate !== today) {
+    setSearchCountToday(0);
+    setLastSearchDate(today);
+  }
+}, []);
+
+useEffect(() => {
+  localStorage.setItem("js_search_count", String(searchCountToday));
+  localStorage.setItem("js_search_date", lastSearchDate);
+}, [searchCountToday, lastSearchDate]);
   const selectedCount = useMemo(() => selectedSites.length, [selectedSites]);
   const cleanedTerm = useMemo(() => cleanSearchTerm(search, searchType), [search, searchType]);
  
