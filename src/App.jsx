@@ -425,6 +425,10 @@ const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     setDraftName("");
     setDraftSites([...selectedSites]);
   }, [open, selectedSites]);
+  useEffect(() => {
+  localStorage.setItem("js_search_count", String(searchCountToday));
+  localStorage.setItem("js_search_date", lastSearchDate);
+}, [searchCountToday, lastSearchDate]);
 
   if (!open) return null;
 
