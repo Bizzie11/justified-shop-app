@@ -408,8 +408,13 @@ function PresetManagerModal({
   const [draftName, setDraftName] = useState("");
   const [draftSites, setDraftSites] = useState([]);
 const [planType, setPlanType] = useState("free");
-const [searchCountToday, setSearchCountToday] = useState(0);
-const [lastSearchDate, setLastSearchDate] = useState("");
+const [searchCountToday, setSearchCountToday] = useState(() => {
+  return Number(localStorage.getItem("js_search_count") || 0);
+});
+
+const [lastSearchDate, setLastSearchDate] = useState(() => {
+  return localStorage.getItem("js_search_date") || "";
+});
 const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   useEffect(() => {
   const today = new Date().toDateString();
