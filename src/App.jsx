@@ -248,9 +248,10 @@ function openUrlsInTabs(urls) {
 function getTodayDate() {
   return new Date().toISOString().split("T")[0];
 }
-function openSelected() {
+function openSelected(searchOverride = null) {
+  const termToSearch = searchOverride ?? cleanedTerm;
 
-  if (!cleanedTerm) return showToast("Enter a search term first.");
+if (!termToSearch) return showToast("Enter a search term first.");
  
   if (!selectedSites.length) return showToast("Choose at least one site.");
   if (planType === "free") {
@@ -282,7 +283,7 @@ localStorage.setItem("js_search_count", String(nextCount));
 setSearchCountToday(nextCount);
 setLastSearchDate(today);
   }
-  navigator.clipboard.writeText(cleanedTerm);
+navigator.clipboard.writeText(termToSearch);
   
   // Close previous tabs if "replaceOpenTabs" is enabled
   let replacedCount = 0;
@@ -301,7 +302,7 @@ setLastSearchDate(today);
   const urls = SITE_CONFIG.filter((site) => selectedSites.includes(site.name))
     .map((site) => ({
       name: site.name,
-      url: site.buildUrl(cleanedTerm),
+      url: site.buildUrl(termToSearch),
     }));
 
   // Open the tabs
@@ -312,7 +313,7 @@ setLastSearchDate(today);
 
   // Update recent searches
   setRecentSearches((current) =>
-    [cleanedTerm, ...current.filter((item) => item !== cleanedTerm)].slice(0, 8)
+ [termToSearch, ...current.filter((item) => item !== termToSearch)].slice(0, 8)
   );
 
   // Show feedback
