@@ -1397,6 +1397,7 @@ Search All Marketplaces
 
     const urls = buildUrls(item, selectedSites);
     const newTabs = openUrlsInTabs(urls);
+    setSearchCountToday(prev => prev + 1);
 
     setOpenedSearchWindows(newTabs);
 
