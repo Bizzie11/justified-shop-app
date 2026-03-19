@@ -271,7 +271,10 @@ let currentDate = storedDate;
       setLastSearchDate(today);
     }
  
-
+console.log("COUNTER DEBUG", {
+  termToSearch,
+  currentCount,
+});
   if (currentCount >= 5) {
   showToast("You’ve reached your 5 free searches for today. Upgrade to Pro for unlimited searches.");
   return;
