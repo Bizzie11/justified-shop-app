@@ -966,7 +966,7 @@ const spreadPrice =
   const showToast = (message) => {
     setToast(message);
     window.clearTimeout(showToast.timeoutId);
-    showToast.timeoutId = window.setTimeout(() => setToast(""), 2200);
+    showToast.timeoutId = window.setTimeout(() => setToast(""), 4000);
   };
 
   useEffect(() => {
@@ -1439,8 +1439,7 @@ Search All Marketplaces
     </div>
 </div>
       {toast ? (
-          <div className="fixed bottom-6 right-6 z-40 rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white shadow-2xl shadow-black/30">
-            {toast}
+      className="fixed bottom-20 right-6 z-40 rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white shadow-2xl shadow-black/30"
           </div>
         ) : null}
 
