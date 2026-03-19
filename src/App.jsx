@@ -278,8 +278,7 @@ showToast(`DEBUG term: ${termToSearch} | count: ${currentCount}`);
 }
 
    const nextCount = currentCount + 1;
-localStorage.setItem("js_search_date", today);
-localStorage.setItem("js_search_count", String(nextCount));
+
 setSearchCountToday(nextCount);
 setLastSearchDate(today);
   }
