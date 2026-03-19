@@ -1146,7 +1146,10 @@ onClick={async () => {
       Live
     </div>
   </div>
-
+<div className="mt-4 rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
+  <p className="text-xs uppercase tracking-wide text-slate-500">Free Plan</p>
+  <p className="mt-1 text-sm font-medium text-white">Free searches used today: 0 / 5</p>
+</div>
   <div className="mt-4 grid gap-3 sm:grid-cols-2">
     <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
       <p className="text-xs uppercase tracking-wide text-slate-500">Search Term</p>
