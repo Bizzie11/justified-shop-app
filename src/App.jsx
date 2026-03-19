@@ -1156,18 +1156,21 @@ onChange={(e) => setSearch(e.target.value)}
                 <button
                   type="button"
 onClick={async () => {
+  const today = new Date().toISOString().split("T")[0];
+  const storedDate = localStorage.getItem("js_search_date") || "";
+  const storedCount = Number(localStorage.getItem("js_search_count") || "0");
+
+  let currentCount = storedDate === today ? storedCount : 0;
+
+  if (currentCount >= 5) {
+    showToast("You've reached your 5 free searches for today. Upgrade to Pro.");
+    return;
+  }
+
   setIsOpening(true);
   try {
-const today = new Date().toISOString().split("T")[0];
-const storedDate = localStorage.getItem("js_search_date") || "";
-const storedCount = Number(localStorage.getItem("js_search_count") || "0");
 
-let currentCount = storedDate === today ? storedCount : 0;
 
-if (currentCount >= 5) {
-  showToast("You've reached your 5 free searches for today. Upgrade to Pro.");
-  return;
-}
 
 const nextCount = currentCount + 1;
 
