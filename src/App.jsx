@@ -412,6 +412,14 @@ const [searchCountToday, setSearchCountToday] = useState(0);
 const [lastSearchDate, setLastSearchDate] = useState("");
 const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   useEffect(() => {
+  const today = new Date().toDateString();
+
+  if (lastSearchDate !== today) {
+    setSearchCountToday(0);
+    setLastSearchDate(today);
+  }
+}, []);
+  useEffect(() => {
     if (!open) return;
     setDraftId("");
     setDraftName("");
