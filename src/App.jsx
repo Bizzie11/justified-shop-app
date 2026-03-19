@@ -1377,46 +1377,21 @@ Search All Marketplaces
     setSearch(item);
     window.requestAnimationFrame(() => searchInputRef.current?.focus());
   }}
-  onDoubleClick={() => {
-    const trimmed = item.trim();
+ onDoubleClick={() => {
+  const trimmed = item.trim();
 
-    setSearch(item);
+  setSearch(item);
 
-    if (/^\d{12,14}$/.test(trimmed)) {
-      setSearchType("UPC");
-    } else if (trimmed.includes(" ")) {
-      setSearchType("Broad");
-    } else {
-      setSearchType("Exact Part #");
-    }
+  if (/^\d{12,14}$/.test(trimmed)) {
+    setSearchType("UPC");
+  } else if (trimmed.includes(" ")) {
+    setSearchType("Broad");
+  } else {
+    setSearchType("Exact Part #");
+  }
 
-    let replacedCount = 0;
-
-    if (replaceOpenTabs) {
-      replacedCount = closeTrackedTabs();
-    }
-
-    const urls = buildUrls(item, selectedSites);
-    const newTabs = openUrlsInTabs(urls);
-    setSearchCountToday(prev => prev + 1);
-
-    setOpenedSearchWindows(newTabs);
-
-    setRecentSearches((current) =>
-      [item, ...current.filter((entry) => entry !== item)].slice(0, 8)
-    );
-
-    if (!newTabs.length) {
-      showToast("Your browser blocked the tabs. Allow pop-ups for smoother searching.");
-      return;
-    }
-
-    showToast(
-      replacedCount > 0
-        ? `Opened ${selectedSites.length} site${selectedSites.length === 1 ? "" : "s"}. Replaced ${replacedCount} tab${replacedCount === 1 ? "" : "s"}.`
-        : `Opened ${selectedSites.length} site${selectedSites.length === 1 ? "" : "s"} from recent search.`
-    );
-  }}
+  openSelected(item);
+}}
                     className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/10 hover:border-white/20 transition cursor-pointer active:scale-[0.98]"
                   >
                     {item}
