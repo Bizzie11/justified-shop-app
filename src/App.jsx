@@ -1438,10 +1438,11 @@ Search All Marketplaces
       </div>
     </div>
 </div>
-      {toast ? (
-      className="fixed bottom-20 right-6 z-40 rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white shadow-2xl shadow-black/30"
-          </div>
-        ) : null}
+   {toast ? (
+  <div className="fixed bottom-20 right-6 z-40 rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white shadow-2xl shadow-black/30">
+    {toast}
+  </div>
+) : null}
 
         {showUpgrade ? <UpgradeModal onClose={() => setShowUpgrade(false)} /> : null}
      
