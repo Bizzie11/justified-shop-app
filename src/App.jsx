@@ -254,8 +254,7 @@ function openSelected(searchOverride = null) {
 if (!termToSearch) return showToast("Enter a search term first.");
  
   if (!selectedSites.length) return showToast("Choose at least one site.");
-  if (planType === "free") {
-  
+if (true) {  
     const today = getTodayDate();
     
   const storedDate = localStorage.getItem("js_search_date") || "";
