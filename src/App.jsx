@@ -271,7 +271,8 @@ let currentDate = storedDate;
     }
  
 showToast(`DEBUG term: ${termToSearch} | count: ${currentCount}`);
-  if (currentCount >= 5) {
+  const isPro = localStorage.getItem("js_is_pro") === "true";
+  if (!isPro && currentCount >= 5) {
   showToast("You’ve reached your 5 free searches for today. Upgrade to Pro for unlimited searches.");
   return;
 }
