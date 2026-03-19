@@ -116,7 +116,7 @@ const pricing = [
     desc: "For sellers who want unlimited searches and faster sourcing.",
     items: [
       "Unlimited searches",
-      "Saved presets",
+      
       "Recent search history",
       "eBay Sold access",
     ],
