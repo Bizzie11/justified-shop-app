@@ -261,7 +261,7 @@ if (!termToSearch) return showToast("Enter a search term first.");
   const storedDate = localStorage.getItem("js_search_date") || "";
 const storedCount = Number(localStorage.getItem("js_search_count") || "0");
 
-let currentCount = storedCount;
+let currentCount = searchCountToday;
 let currentDate = storedDate;
 
     if (currentDate !== today) {
