@@ -112,8 +112,8 @@ const pricing = [
   },
   {
     name: "Pro",
-    price: "$29/mo",
-    desc: "For sellers who check products every day and want full flexibility month to month.",
+    price: "$12/mo",
+    desc: "For sellers who want unlimited searches and faster sourcing.",
     items: [
       "Unlimited searches",
       "Saved presets",
@@ -124,12 +124,12 @@ const pricing = [
   },
   {
     name: "Annual Plan",
-    price: "$239/yr",
-    subprice: "Equivalent to $19.99/month, billed annually",
-    desc: "Best value for sellers who want full access and lower annual pricing.",
+    price: "$99/yr",
+    subprice: "Equivalent to $8.25/month, billed annually",
+    desc: "Best value — save 30% with annual billing.",
     items: [
       "Everything in Pro",
-      "Save $109 per year vs monthly",
+      "Save $45 per year vs monthly",
       "Annual billing discount",
       "Priority product feedback consideration",
     ],
