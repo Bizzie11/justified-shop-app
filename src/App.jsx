@@ -1153,26 +1153,8 @@ onChange={(e) => setSearch(e.target.value)}
                 <button
                   type="button"
 onClick={async () => {
-  const today = new Date().toISOString().split("T")[0];
-  const storedDate = localStorage.getItem("js_search_date") || "";
-  const storedCount = Number(localStorage.getItem("js_search_count") || "0");
-
-  let currentCount = storedDate === today ? storedCount : 0;
-
-
-
   setIsOpening(true);
   try {
-
-
-
-const nextCount = currentCount + 1;
-
-localStorage.setItem("js_search_date", today);
-localStorage.setItem("js_search_count", String(nextCount));
-setSearchCountToday(nextCount);
-setLastSearchDate(today);
-    
     await openSelected();
   } finally {
     setTimeout(() => setIsOpening(false), 1200);
