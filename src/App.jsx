@@ -1179,7 +1179,7 @@ onClick={async () => {
   </div>
 <div className="mt-4 rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
   <p className="text-xs uppercase tracking-wide text-slate-500">Free Plan</p>
-<p className="mt-1 text-sm font-medium text-white">Free searches used today: {searchCountToday} / 5</p>
+<p className="mt-1 text-sm font-medium text-white">Account-based usage limits coming soon.</p>
 </div>
   <div className="mt-4 grid gap-3 sm:grid-cols-2">
     <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
