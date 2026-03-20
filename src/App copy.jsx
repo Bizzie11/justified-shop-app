@@ -17,7 +17,7 @@ import {
   Star,
   Save,
 } from "lucide-react";
-import { supabase } from "./lib/supabaseClient";
+
 const STORAGE_KEYS = {
   presets: "justifiedshop.presets",
   selectedPresetId: "justifiedshop.selectedPresetId",
@@ -49,17 +49,21 @@ const SITE_CONFIG = [
         term
       )}&LH_Sold=1&LH_Complete=1`,
   },
-{
-  name: "Google",
-  free: true,
-  buildUrl: (term) => `https://www.google.com/search?q=${encodeURIComponent(term)}`,
-},
-
-{
-  name: "Home Depot",
-  free: true,
-  buildUrl: (term) => `https://www.homedepot.com/s/${encodeURIComponent(term)}`,
-},
+  {
+    name: "Home Depot",
+    free: true,
+    buildUrl: (term) => `https://www.homedepot.com/s/${encodeURIComponent(term)}`,
+  },
+  {
+    name: "Lowe's",
+    free: true,
+    buildUrl: (term) => `https://www.lowes.com/search?searchTerm=${encodeURIComponent(term)}`,
+  },
+  {
+    name: "Google",
+    free: true,
+    buildUrl: (term) => `https://www.google.com/search?q=${encodeURIComponent(term)}`,
+  },
 ];
 
 const FREE_SITE_NAMES = SITE_CONFIG.filter((site) => site.free).map((site) => site.name);
@@ -75,14 +79,14 @@ const DEFAULT_PRESETS = [
   {
     id: "preset-hardware",
     name: "Hardware",
-    sites: ["Amazon", "Google"],
+    sites: ["Amazon", "Home Depot", "Lowe's", "Google"],
     isDefault: false,
     isSystem: true,
   },
   {
     id: "preset-plumbing",
     name: "Plumbing",
-    sites: ["Amazon", "Walmart", "Google"],
+    sites: ["Amazon", "Walmart", "Home Depot", "Google"],
     isDefault: false,
     isSystem: true,
   },
@@ -107,16 +111,16 @@ const pricing = [
     name: "Free",
     price: "$0",
     desc: "Try the workflow before upgrading.",
-    items: ["Core marketplaces", "Search selected marketplaces", "Test the workflow first"],
+    items: ["Core marketplaces", "Open selected sites", "Test the workflow first"],
     cta: "Start Free",
   },
   {
     name: "Pro",
-    price: "$12/mo",
-    desc: "For sellers who want unlimited searches and faster sourcing.",
+    price: "$29/mo",
+    desc: "For sellers who check products every day and want full flexibility month to month.",
     items: [
       "Unlimited searches",
-      
+      "Saved presets",
       "Recent search history",
       "eBay Sold access",
     ],
@@ -124,12 +128,12 @@ const pricing = [
   },
   {
     name: "Annual Plan",
-    price: "$99/yr",
-    subprice: "Equivalent to $8.25/month, billed annually",
-    desc: "Best value — save 30% with annual billing.",
+    price: "$239/yr",
+    subprice: "Equivalent to $19.99/month, billed annually",
+    desc: "Best value for sellers who want full access and lower annual pricing.",
     items: [
       "Everything in Pro",
-      "Save $45 per year vs monthly",
+      "Save $109 per year vs monthly",
       "Annual billing discount",
       "Priority product feedback consideration",
     ],
@@ -209,8 +213,8 @@ function cleanSearchTerm(value, searchType) {
   if (searchType === "Exact Part #") return noExtraSpaces;
 
   return noExtraSpaces
-    .replace(/[']/g, "")
-    .replace(/[^a-zA-Z0-9\-\s"]/g, " ")
+    .replace(/["']/g, "")
+    .replace(/[^a-zA-Z0-9\-\s]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -222,118 +226,17 @@ function buildUrls(term, siteNames) {
   }));
 }
 
-// Open multiple URLs in tabs and track them
 function openUrlsInTabs(urls) {
-  const openedTabs = [];
-
-  // keep reverse loop so tabs appear in normal left-to-right order
-  for (let i = urls.length - 1; i >= 0; i--) {
-    try {
-      const isGoogle = urls[i].name === "Google";
-      const tab = window.open(urls[i].url, "_blank");
-
-      if (tab && !isGoogle) {
-        openedTabs.push(tab);
-      }
-    } catch {
-      // ignore errors
-    }
-  }
-
-  return openedTabs;
-}
-
-
-// Function to open selected sites from the dashboard
-function getTodayDate() {
-  return new Date().toISOString().split("T")[0];
-}
-function openSelected(searchOverride = null) {
-  const termToSearch = searchOverride ?? cleanedTerm;
-
-if (!termToSearch) return showToast("Enter a search term first.");
- 
-  if (!selectedSites.length) return showToast("Choose at least one site.");
-if (true) {  
-    const today = getTodayDate();
-    
-  const storedDate = localStorage.getItem("js_search_date") || "";
-const storedCount = Number(localStorage.getItem("js_search_count") || "0");
-
-let currentCount = searchCountToday;
-let currentDate = storedDate;
-
-    if (currentDate !== today) {
-      currentCount = 0;
-      currentDate = today;
-      setSearchCountToday(0);
-      setLastSearchDate(today);
-    }
- 
-showToast(`DEBUG term: ${termToSearch} | count: ${currentCount}`);
-// temporary: disable free search limit while Pro access is being wired
-
-   const nextCount = currentCount + 1;
-
-setSearchCountToday(nextCount);
-setLastSearchDate(today);
-  }
-navigator.clipboard.writeText(termToSearch);
-  
-  // Close previous tabs if "replaceOpenTabs" is enabled
-  let replacedCount = 0;
-  if (replaceOpenTabs && openedSearchWindows.length) {
-    openedSearchWindows.forEach((tab) => {
+  return urls
+    .map((item) => {
       try {
-        if (tab && !tab.closed) {
-          tab.close();
-          replacedCount += 1;
-        }
-      } catch {}
-    });
-  }
-
-  // Build URLs for the selected sites
-  const urls = SITE_CONFIG.filter((site) => selectedSites.includes(site.name))
-    .map((site) => ({
-      name: site.name,
-      url: site.buildUrl(termToSearch),
-    }));
-
-  // Open the tabs
-  const newTabs = openUrlsInTabs(urls);
-
-  // Track opened tabs in state
-  setOpenedSearchWindows(newTabs);
-
-  // Update recent searches
-  setRecentSearches((current) =>
- [termToSearch, ...current.filter((item) => item !== termToSearch)].slice(0, 8)
-  );
-
-  // Show feedback
-  if (!newTabs.length) {
-    return showToast(
-      "Your browser blocked the tabs. Allow pop-ups for smoother searching."
-    );
-  }
-
-  showToast(
-    replacedCount > 0
-      ? `Opened ${newTabs.length} site(s). Replaced ${replacedCount} previous tab${
-          replacedCount === 1 ? "" : "s"
-        }.`
-      : `Opened ${newTabs.length} site${newTabs.length === 1 ? "" : "s"}.`
-  );
-
-  // Focus the search input again
-  window.requestAnimationFrame(() => searchInputRef.current?.focus());
+        return window.open(item.url, "_blank");
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
 }
-
-  
-
-
-
 
 function LogoMark() {
   return (
@@ -371,7 +274,7 @@ function SiteCard({ name, selected, onClick, locked }) {
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-2xl border px-4 py-2 text-left transition duration-150",
+        "rounded-2xl border px-4 py-3 text-left transition duration-150",
         selected
           ? "border-emerald-400/50 bg-emerald-400/10 text-white"
           : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10"
@@ -403,33 +306,36 @@ function PresetManagerModal({
   const [draftId, setDraftId] = useState("");
   const [draftName, setDraftName] = useState("");
   const [draftSites, setDraftSites] = useState([]);
-const [planType, setPlanType] = useState("free");
-const [searchCountToday, setSearchCountToday] = useState(() => {
-  return Number(localStorage.getItem("js_search_count") || 0);
-});
+const startCheckout = async (plan) => {
+  try {
+    const res = await fetch("/.netlify/functions/create-checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ plan }),
+    });
 
-const [lastSearchDate, setLastSearchDate] = useState(() => {
-  return localStorage.getItem("js_search_date") || "";
-});
-const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  useEffect(() => {
-  const today = new Date().toDateString();
+    const data = await res.json();
 
-  if (lastSearchDate !== today) {
-    setSearchCountToday(0);
-    setLastSearchDate(today);
+    if (!res.ok) {
+      throw new Error(data.error || "Checkout failed");
+    }
+
+    if (data.url) {
+      window.location.href = data.url;
+    }
+  } catch (error) {
+    console.error("Checkout error:", error);
+    alert("Checkout failed. Please try again.");
   }
-}, []);
+};
   useEffect(() => {
     if (!open) return;
     setDraftId("");
     setDraftName("");
     setDraftSites([...selectedSites]);
   }, [open, selectedSites]);
-  useEffect(() => {
-  localStorage.setItem("js_search_count", String(searchCountToday));
-  localStorage.setItem("js_search_date", lastSearchDate);
-}, [searchCountToday, lastSearchDate]);
 
   if (!open) return null;
 
@@ -777,7 +683,9 @@ function Hero() {
             Search Faster. Source Smarter.
           </p>
           <p className="mt-4 max-w-xl text-base leading-7 text-slate-300">
-           Instantly open product searches across your selected marketplaces from one clean workflow built for resellers.
+            Instantly open product searches across Amazon, Walmart, eBay, eBay Sold,
+            Home Depot, Lowe&apos;s, Google, and more from one clean workflow built for
+            resellers.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <a
@@ -835,20 +743,20 @@ function Hero() {
               ))}
             </div>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-<button
-  type="button"
-  onClick={openSelected}
-  className="rounded-2xl bg-emerald-400 px-4 py-3 font-semibold text-slate-950"
->
-  Open Selected Sites
-</button>
-</div>
-</div>
-</div>
+              <button className="rounded-2xl bg-emerald-400 px-4 py-3 font-semibold text-slate-950">
+                Open Selected Sites
+              </button>
+              <button className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 font-semibold text-white">
+                Save Preset
+              </button>
+            </div>
+          </div>
         </div>
-</section>
-);
+      </div>
+    </section>
+  );
 }
+
 function Features() {
   const items = [
     {
@@ -885,120 +793,59 @@ function Features() {
 }
 
 function DashboardPreview() {
-  console.log("Supabase connected:", supabase);
   const initialPresets = useMemo(
     () => normalizePresets(readStorage(STORAGE_KEYS.presets, DEFAULT_PRESETS)),
     []
   );
 
-  const [search, setSearch] = useState("");
-  const [isOpening, setIsOpening] = useState(false);
+  const [search, setSearch] = useState("Klein 11-in-1 screwdriver");
   const searchInputRef = useRef(null);
   const [searchType, setSearchType] = useState("Exact Part #");
   const [presets, setPresets] = useState(initialPresets);
-
-const [selectedSites, setSelectedSites] = useState(() => {
-  const saved = readStorage(STORAGE_KEYS.selectedSites, null);
-  return Array.isArray(saved) && saved.length > 0 ? saved : ["Amazon", "Walmart", "eBay"];
-});
+  const [selectedPresetId, setSelectedPresetId] = useState(() =>
+    mergeSelectedPresetId(readStorage(STORAGE_KEYS.selectedPresetId, ""), initialPresets)
+  );
+  const [selectedSites, setSelectedSites] = useState(() => {
+    const saved = readStorage(STORAGE_KEYS.selectedSites, null);
+    if (Array.isArray(saved) && saved.length > 0) return saved;
+    const activePresetId = mergeSelectedPresetId(
+      readStorage(STORAGE_KEYS.selectedPresetId, ""),
+      initialPresets
+    );
+    return getPresetById(initialPresets, activePresetId)?.sites || [];
+  });
   const [recentSearches, setRecentSearches] = useState(() => {
     const saved = readStorage(STORAGE_KEYS.recentSearches, null);
     return Array.isArray(saved) && saved.length ? saved.slice(0, 8) : DEFAULT_RECENT;
   });
   const [showUpgrade, setShowUpgrade] = useState(false);
- 
+  const [showPresetManager, setShowPresetManager] = useState(false);
   const [replaceOpenTabs, setReplaceOpenTabs] = useState(true);
   const [openedSearchWindows, setOpenedSearchWindows] = useState([]);
   const [toast, setToast] = useState("");
   const activeTrackedTabs = openedSearchWindows.filter((tab) => tab && !tab.closed).length;
   const showingExampleSearches = recentSearches.every((item) => DEFAULT_RECENT.includes(item));
-const [searchCountToday, setSearchCountToday] = useState(() => {
-return Number(localStorage.getItem("js_search_count") || "0");
-});
 
-const [lastSearchDate, setLastSearchDate] = useState(() => {
-  return localStorage.getItem("js_search_date") || "";
-});
-  useEffect(() => {
-  const today = new Date().toISOString().split("T")[0];
-
-  if (lastSearchDate !== today) {
-    setSearchCountToday(0);
-    setLastSearchDate(today);
-  }
-}, []);
-
-const [products, setProducts] = useState([]);
-
-
-useEffect(() => {
-  const fetchProducts = async () => {
-    const { data, error } = await supabase
-      .from("products")
-      .select("*");
-
-    if (error) {
-      console.error("Error fetching:", error);
-    } else {
-      console.log("Supabase data:", data);
-      setProducts(data);
-    }
-  };
-
-  fetchProducts();
-}, []);
- 
- 
   const selectedCount = useMemo(() => selectedSites.length, [selectedSites]);
   const cleanedTerm = useMemo(() => cleanSearchTerm(search, searchType), [search, searchType]);
- 
-  const mockSnapshot = [
-  { site: "Amazon", price: "$24.99" },
-  { site: "Walmart", price: "$21.88" },
-  { site: "eBay", price: "$19.50" },
-  { site: "Target", price: "No result" },
-];
-
-const snapshotPrices = products
-  .map((item) => {
-    const raw = String(item.price).replace(/[^0-9.]/g, "");
-    if (!raw) return null;
-    const value = Number(raw);
-    return Number.isFinite(value) ? value : null;
-  })
-  .filter((value) => value !== null);
-
-const productList = products.map((p) => ({
-  name: p.name,
-  price: p.price,
-  site: p.site,
-}));
-const lowestPrice =
-  snapshotPrices.length > 0 ? `$${Math.min(...snapshotPrices).toFixed(2)}` : "-";
-
-const cheapest =
-  snapshotPrices.length > 0 ? Math.min(...snapshotPrices) : null;
-
-
-const highestPrice =
-  snapshotPrices.length > 0 ? `$${Math.max(...snapshotPrices).toFixed(2)}` : "—";
-
-const spreadPrice =
-  snapshotPrices.length > 1
-    ? `$${(Math.max(...snapshotPrices) - Math.min(...snapshotPrices)).toFixed(2)}`
-    : "—";
+  const selectedPreset = useMemo(
+    () => getPresetById(presets, selectedPresetId),
+    [presets, selectedPresetId]
+  );
 
   const showToast = (message) => {
     setToast(message);
     window.clearTimeout(showToast.timeoutId);
-    showToast.timeoutId = window.setTimeout(() => setToast(""), 4000);
+    showToast.timeoutId = window.setTimeout(() => setToast(""), 2200);
   };
 
   useEffect(() => {
     writeStorage(STORAGE_KEYS.presets, presets);
   }, [presets]);
 
-
+  useEffect(() => {
+    writeStorage(STORAGE_KEYS.selectedPresetId, selectedPresetId);
+  }, [selectedPresetId]);
 
   useEffect(() => {
     writeStorage(STORAGE_KEYS.selectedSites, selectedSites);
@@ -1008,25 +855,17 @@ const spreadPrice =
     writeStorage(STORAGE_KEYS.recentSearches, recentSearches);
   }, [recentSearches]);
 
+  useEffect(() => {
+    const mergedId = mergeSelectedPresetId(selectedPresetId, presets);
+    if (mergedId !== selectedPresetId) {
+      setSelectedPresetId(mergedId);
+      setSelectedSites(getPresetById(presets, mergedId)?.sites || []);
+    }
+  }, [presets, selectedPresetId]);
 
-
-useEffect(() => {
-  searchInputRef.current?.focus();
-}, []);
-
-useEffect(() => {
-  const trimmed = search.trim();
-
-  if (!trimmed) return;
-
-  if (/^\d{12,14}$/.test(trimmed)) {
-    setSearchType("UPC");
-  } else if (trimmed.includes(" ")) {
-    setSearchType("Broad");
-  } else {
-    setSearchType("Exact Part #");
-  }
-}, [search]);
+  useEffect(() => {
+    searchInputRef.current?.focus();
+  }, []);
 
   const closeTrackedTabs = () => {
     if (!openedSearchWindows.length) return 0;
@@ -1047,7 +886,12 @@ useEffect(() => {
     return closedCount;
   };
 
-
+  const handlePresetChange = (event) => {
+    const nextPreset = getPresetById(presets, event.target.value);
+    if (!nextPreset) return;
+    setSelectedPresetId(nextPreset.id);
+    setSelectedSites([...nextPreset.sites]);
+  };
 
   const toggleSite = (site) => {
     if (!site.free) {
@@ -1139,7 +983,7 @@ useEffect(() => {
         <SectionTitle
           eyebrow="Main dashboard"
           title="Search once. Check every marketplace instantly."
-          text="Enter a product name, model number, or UPC and instantly open results across every marketplace you select."
+          text="Paste a product name, model number, or UPC and instantly open results across Amazon, Walmart, eBay, Home Depot, Lowe's, Google and more."
         />
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
@@ -1160,10 +1004,10 @@ useEffect(() => {
                 <input
                   ref={searchInputRef}
                   value={search}
-onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && openSelected()}
                   className="w-full bg-transparent text-lg text-white outline-none placeholder:text-slate-500"
-                  placeholder="Enter a product name, model number, or UPC"
+                  placeholder="Paste product name, model number, or UPC"
                 />
                 {search ? (
                   <button
@@ -1180,117 +1024,78 @@ onChange={(e) => setSearch(e.target.value)}
                 ) : null}
                 <button
                   type="button"
-onClick={async () => {
-  setIsOpening(true);
-  try {
-    await openSelected();
-  } finally {
-    setTimeout(() => setIsOpening(false), 1200);
-  }
-}}
+                  onClick={openSelected}
                   className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/10 transition hover:bg-emerald-300"
                 >
-                  {isOpening ? "Opening..." : "Open Results"}
+                  Search
                 </button>
               </div>
             </div>
-<div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
-  <div className="flex items-start justify-between gap-3">
-    <div>
-      <p className="text-sm font-medium text-white">Search Summary</p>
-<p className="text-sm text-slate-400">A clean overview of your current search</p>
-<div className="mt-3 text-sm text-slate-300">
-  <p className="mb-2 font-medium text-white">Live Products</p>
 
-  {productList.length === 0 ? (
-    <p>No products yet</p>
-  ) : (
- productList.map((p, i) => {
-  const priceValue = Number(p.price);
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <div>
+                <p className="mb-2 text-sm text-slate-400">Search type</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {["Exact Part #", "Broad", "UPC"].map((type) => (
+                    <button
+                      type="button"
+                      key={type}
+                      onClick={() => setSearchType(type)}
+                      className={cn(
+                        "rounded-2xl px-4 py-3 text-sm font-medium",
+                        searchType === type
+                          ? "bg-emerald-400 font-semibold text-slate-950"
+                          : "border border-white/10 bg-white/5 text-slate-300"
+                      )}
+                    >
+                      {type}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-  return (
-    <div
-      key={i}
-      className={`flex justify-between items-center border rounded-lg px-3 py-2 mb-2 ${
-        priceValue === cheapest
-          ? "bg-emerald-500/10 border-emerald-400"
-          : "bg-white/5 border-white/10"
-      }`}
-    >
-      <div>
-        <p className="text-white font-medium">{p.name}</p>
-        <p className="text-xs text-slate-400">{p.site}</p>
-      </div>
-      <div className="text-emerald-400 font-semibold">
-        ${p.price}
-      </div>
-    </div>
-  );
-})
-)}
-</div>
-  
-    </div>
-    <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300">
-      Live
-    </div>
-  </div>
-<div className="mt-4 rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
-  <p className="text-xs uppercase tracking-wide text-slate-500">Free Plan</p>
-<p className="mt-1 text-sm font-medium text-white">Account-based usage limits coming soon.</p>
-</div>
-  <div className="mt-4 grid gap-3 sm:grid-cols-2">
-    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
-      <p className="text-xs uppercase tracking-wide text-slate-500">Search Term</p>
-      <p className="mt-1 text-sm font-medium text-white break-words">
-        {cleanedTerm || "No search yet — try an example or paste a product above."}
-      </p>
-    </div>
+              <div>
+                <p className="mb-2 text-sm text-slate-400">Preset</p>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <select
+                      value={selectedPresetId}
+                      onChange={handlePresetChange}
+                      className="w-full appearance-none rounded-2xl border border-white/10 bg-white/5 px-4 py-3 pr-10 text-sm text-white outline-none"
+                    >
+                      {presets.map((preset) => (
+                        <option key={preset.id} value={preset.id} className="bg-slate-900 text-white">
+                          {preset.name}
+                          {preset.isDefault ? " • Default" : ""}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={saveCurrentAsPreset}
+                    className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                  >
+                    <Save className="h-4 w-4" />
+                    <span className="hidden sm:inline">Save Preset</span>
+                  </button>
+                </div>
+              </div>
+            </div>
 
-    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
-      <p className="text-xs uppercase tracking-wide text-slate-500">Search Type</p>
-      <p className="mt-1 text-sm font-medium text-white">{searchType}</p>
-    </div>
-
-    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
-      <p className="text-xs uppercase tracking-wide text-slate-500">Sites Selected</p>
-      <p className="mt-1 text-sm font-medium text-white">
-        {selectedCount} site{selectedCount === 1 ? "" : "s"}
-      </p>
-    </div>
-
-    <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
-     <p className="text-xs uppercase tracking-wide text-slate-500">Tabs Opened Last Search</p>
-      <p className="mt-1 text-sm font-medium text-white">{activeTrackedTabs}</p>
-    </div>
-  </div>
-</div>
-
-
-
-
-<div className="mt-4">
-  <p className="mb-2 text-sm text-slate-400">Search type</p>
-  <div className="grid grid-cols-3 gap-2 md:max-w-md">
-    {["Exact Part #", "Broad", "UPC"].map((type) => (
-      <button
-        type="button"
-        key={type}
-        onClick={() => setSearchType(type)}
-        className={cn(
-          "rounded-2xl px-4 py-3 text-sm font-medium",
-          searchType === type
-            ? "bg-emerald-400 font-semibold text-slate-950"
-            : "border border-white/10 bg-white/5 text-slate-300"
-        )}
-      >
-        {type}
-      </button>
-    ))}
-  </div>
-</div>
-
-
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+              <div className="text-sm text-slate-400">
+                Active preset: <span className="text-slate-200">{selectedPreset?.name || "Custom"}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPresetManager(true)}
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-300 hover:bg-white/10"
+              >
+                <Settings2 className="h-4 w-4" /> Manage Presets
+              </button>
+            </div>
 
             <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -1325,7 +1130,7 @@ onClick={async () => {
 
               <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm">
                 <span className="text-slate-400">
-                  Tabs opened last search: <span className="text-slate-200">{activeTrackedTabs}</span>
+                  Tracked open search tabs: <span className="text-slate-200">{activeTrackedTabs}</span>
                 </span>
                 <button
                   type="button"
@@ -1339,7 +1144,7 @@ onClick={async () => {
 
             <div className="mt-6">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-sm text-slate-400">Marketplaces to check</p>
+                <p className="text-sm text-slate-400">Choose marketplaces</p>
                 <div className="flex gap-2 text-sm">
                   <button
                     type="button"
@@ -1376,14 +1181,14 @@ onClick={async () => {
                 onClick={openSelected}
                 className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-400 px-5 py-3.5 font-semibold text-slate-950"
               >
-             <ExternalLink className="h-4 w-4" /> Search Selected Marketplaces
+                <ExternalLink className="h-4 w-4" /> Open Selected Sites
               </button>
               <button
                 type="button"
                 onClick={openAll}
                 className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 font-semibold text-white"
               >
-Search All Marketplaces
+                Open All
               </button>
               <button
                 type="button"
@@ -1413,101 +1218,82 @@ Search All Marketplaces
                     {showingExampleSearches ? "Try one of these" : "Jump back in"}
                   </h3>
                 </div>
+                <Clock3 className="h-5 w-5 text-slate-500" />
               </div>
-              <div className="flex items-center gap-2">
-  {recentSearches.length > 0 && (
-    <button
-      onClick={() => {
-        setRecentSearches([]);
-        localStorage.removeItem("recentSearches");
-        showToast("Recent searches cleared.");
-      }}
-      className="text-xs text-slate-400 hover:text-white transition"
-    >
-      Clear
-    </button>
-  )}
-
-  <Clock3 className="h-5 w-5 text-slate-500" />
-</div>
 
               <p className="mt-3 text-sm text-slate-400">
                 {showingExampleSearches
-                  ? "Use a starter search to see how Justified Shop works."
+                  ? "Starter examples to help new users test the workflow."
                   : "Your latest searches stay saved in this browser for quick repeat checks."}
               </p>
-<p className="text-xs text-slate-500 mb-2">
-  Click to load • Double-click to search
-</p>              
-<div className="mt-4 space-y-3">
-  {recentSearches.map((item) => (
-            <button
-  type="button"
-  key={item}
-  onClick={() => {
-    setSearch(item);
-    window.requestAnimationFrame(() => searchInputRef.current?.focus());
-  }}
- onDoubleClick={() => {
-  const trimmed = item.trim();
 
-  setSearch(item);
-
-  if (/^\d{12,14}$/.test(trimmed)) {
-    setSearchType("UPC");
-  } else if (trimmed.includes(" ")) {
-    setSearchType("Broad");
-  } else {
-    setSearchType("Exact Part #");
-  }
-
-  openSelected(item);
-}}
-                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/10 hover:border-white/20 transition cursor-pointer active:scale-[0.98]"
+              <div className="mt-4 space-y-3">
+                {recentSearches.map((item) => (
+                  <button
+                    type="button"
+                    key={item}
+                    onClick={() => {
+                      setSearch(item);
+                      window.requestAnimationFrame(() => searchInputRef.current?.focus());
+                    }}
+                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/10"
                   >
                     {item}
                   </button>
                 ))}
-         </div>
-      </div>
-    </div>
-</div>
-   {toast ? (
-  <div className="fixed bottom-20 right-6 z-40 rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white shadow-2xl shadow-black/30">
-    {toast}
-  </div>
-) : null}
+              </div>
+            </div>
+
+            <div className="rounded-[32px] border border-white/10 bg-slate-950 p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-400">Saved presets</p>
+                  <h3 className="text-xl font-semibold text-white">Fast workflows</h3>
+                </div>
+                <CheckCircle2 className="h-5 w-5 text-emerald-300" />
+              </div>
+              <div className="mt-4 space-y-3">
+                {presets.map((preset) => (
+                  <button
+                    type="button"
+                    key={preset.id}
+                    onClick={() => {
+                      setSelectedPresetId(preset.id);
+                      setSelectedSites([...preset.sites]);
+                    }}
+                    className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/10"
+                  >
+                    <span className="truncate pr-3">{preset.name}</span>
+                    <ExternalLink className="h-4 w-4 shrink-0 text-slate-500" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {toast ? (
+          <div className="fixed bottom-6 right-6 z-40 rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white shadow-2xl shadow-black/30">
+            {toast}
+          </div>
+        ) : null}
 
         {showUpgrade ? <UpgradeModal onClose={() => setShowUpgrade(false)} /> : null}
-     
+        <PresetManagerModal
+          open={showPresetManager}
+          onClose={() => setShowPresetManager(false)}
+          presets={presets}
+          selectedPresetId={selectedPresetId}
+          selectedSites={selectedSites}
+          setSelectedPresetId={setSelectedPresetId}
+          setSelectedSites={setSelectedSites}
+          setPresets={setPresets}
+          showToast={showToast}
+        />
       </div>
     </section>
   );
 }
-const startCheckout = async (plan) => {
-  try {
-    const res = await fetch("/.netlify/functions/create-checkout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ plan }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Checkout failed");
-    }
-
-    if (data.url) {
-      window.location.href = data.url;
-    }
-  } catch (error) {
-    console.error("Checkout error:", error);
-    alert("Checkout failed. Please try again.");
-  }
-};
 
 function Pricing() {
   return (
@@ -1551,10 +1337,12 @@ function Pricing() {
                 </li>
               ))}
             </ul>
-    <button
+    
+              
+  <button
   onClick={() => {
     if (tier.name === "Pro") startCheckout("pro-monthly")
-    else if (tier.name === "Annual Plan") startCheckout("annual")
+    else if (tier.name === "Annual") startCheckout("annual")
   }}
   className={cn(
     "mt-6 w-full rounded-2xl px-4 py-3 font-semibold",
@@ -1565,7 +1353,7 @@ function Pricing() {
 >
   {tier.cta}
 </button>
-          </div>
+         </div>
         ))}
       </div>
     </section>
@@ -1681,13 +1469,9 @@ function UpgradeModal({ onClose }) {
               <p className="mt-4 text-4xl font-bold text-white">
                 $29<span className="text-lg font-medium text-slate-400">/mo</span>
               </p>
-<button
-  onClick={() => startCheckout("pro-monthly")}
-  className="mt-5 w-full rounded-2xl bg-emerald-400 px-5 py-3.5 font-semibold text-slate-950"
->
-  Start Pro
-</button>
-
+              <button className="mt-5 w-full rounded-2xl bg-emerald-400 px-5 py-3.5 font-semibold text-slate-950">
+                Start Pro
+              </button>
             </div>
 
             <div className="rounded-[28px] border border-white/10 bg-white/5 p-5">
@@ -1703,13 +1487,9 @@ function UpgradeModal({ onClose }) {
               <p className="mt-4 text-4xl font-bold text-white">
                 $239<span className="text-lg font-medium text-slate-400"> / year</span>
               </p>
-              <button
-  onClick={() => startCheckout("annual")}
-  className="mt-5 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 font-semibold text-white"
->
-  Choose Annual Plan
-</button>
-
+              <button className="mt-5 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 font-semibold text-white">
+                Choose Annual Plan
+              </button>
             </div>
           </div>
         </div>
@@ -1949,12 +1729,10 @@ export default function App() {
   if (pathname === "/billing") {
     return <BillingPage />;
   }
-if (pathname === "/success") {
+  if (pathname === "/success") {
   return <SuccessPage />;
 }
-  if (pathname === "/cancel") {
-  return <CancelPage />;
-}
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <Nav />
@@ -1966,45 +1744,22 @@ if (pathname === "/success") {
       <Footer />
     </div>
   );
-}
-function SuccessPage() {
+}function SuccessPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
       <div className="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center shadow-xl">
+
         <h1 className="text-3xl font-bold text-emerald-400 mb-4">
           Payment Successful
         </h1>
+
         <p className="text-slate-300 text-lg mb-4">
           Thank you for subscribing to Justified Shop Pro.
         </p>
+
         <p className="text-slate-400 mb-8">
           Your subscription is now active.
         </p>
-        <a
-          href="/"
-          className="inline-block bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold px-6 py-3 rounded-xl transition"
-        >
-          Return to Dashboard
-        </a>
-      </div>
-    </div>
-  );
-}
-function CancelPage() {
-  return (
-    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
-      <div className="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center shadow-xl">
-        <h1 className="text-3xl font-bold text-red-400 mb-4">
-          Checkout Cancelled
-        </h1>
-
-        <p className="text-slate-300 text-lg mb-4">
-          No payment was made.
-        </p>
-
-        <p className="text-slate-400 mb-8">
-          You can come back anytime and subscribe when you're ready.
-        </p>
 
         <a
           href="/"
@@ -2012,19 +1767,8 @@ function CancelPage() {
         >
           Return to Dashboard
         </a>
+
       </div>
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
