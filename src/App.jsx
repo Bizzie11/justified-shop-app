@@ -1159,10 +1159,7 @@ onClick={async () => {
 
   let currentCount = storedDate === today ? storedCount : 0;
 
-  if (currentCount >= 5) {
-    showToast("You've reached your 5 free searches for today. Upgrade to Pro.");
-    return;
-  }
+
 
   setIsOpening(true);
   try {
