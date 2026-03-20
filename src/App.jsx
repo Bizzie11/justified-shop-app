@@ -1201,7 +1201,7 @@ onClick={async () => {
 <p className="text-sm text-slate-400">A clean overview of your current search</p>
 <div className="mt-3 text-sm text-slate-300">
   <p className="mb-2 font-medium text-white">Live Products</p>
-
+{/*
   {productList.length === 0 ? (
     <p>No products yet</p>
   ) : (
@@ -1228,6 +1228,7 @@ onClick={async () => {
   );
 })
 )}
+*/}
 </div>
   
     </div>
