@@ -870,7 +870,7 @@ function Features() {
       <SectionTitle
         eyebrow="Why it works"
         title="A clean workflow beats a cluttered tool."
-        text="The customer version should feel obvious from the first click. No crowded dashboard. No bloated features. Just a faster way to check products."
+        text="It should just make sense from the first click. No crowded dashboards. No bloated features. Just a faster way to check products."
       />
       <div className="mt-10 grid gap-6 md:grid-cols-3">
         {items.map((item) => (
@@ -1146,7 +1146,7 @@ useEffect(() => {
           <div className="rounded-[32px] border border-white/10 bg-slate-950 p-5 shadow-2xl shadow-black/30 md:p-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
-                <p className="text-sm text-slate-400">Search</p>
+            
                 <h3 className="text-2xl font-semibold text-white">Check products instantly</h3>
               </div>
               <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300">
@@ -1197,10 +1197,9 @@ onClick={async () => {
 <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
   <div className="flex items-start justify-between gap-3">
     <div>
-      <p className="text-sm font-medium text-white">Search Summary</p>
-<p className="text-sm text-slate-400">A clean overview of your current search</p>
+      
 <div className="mt-3 text-sm text-slate-300">
-  <p className="mb-2 font-medium text-white">Live Products</p>
+  
 {/*
   {productList.length === 0 ? (
     <p>No products yet</p>
@@ -1232,9 +1231,7 @@ onClick={async () => {
 </div>
   
     </div>
-    <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300">
-      Live
-    </div>
+   
   </div>
 <div className="mt-4 rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
   <p className="text-xs uppercase tracking-wide text-slate-500">Free Plan</p>
@@ -1515,8 +1512,8 @@ function Pricing() {
     <section id="pricing" className="scroll-mt-28 mx-auto max-w-7xl px-6 py-20 md:px-10">
       <SectionTitle
         eyebrow="Pricing"
-        title="A $29 tool that can save hours of sourcing every week."
-        text="Built for people who actually source products and compare marketplaces every day."
+        title="A simple tool that can save hours of sourcing every week."
+        text="Built for sellers who source and compare products every day."
         center
       />
       <div className="mt-12 grid gap-6 lg:grid-cols-3">
