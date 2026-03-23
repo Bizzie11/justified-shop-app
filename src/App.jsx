@@ -1071,10 +1071,10 @@ if (storedDate !== today) {
   localStorage.setItem(SEARCH_COUNT_KEY, "0");
   storedCount = 0;
 }
+const isPro = localStorage.getItem("js_is_pro") === "true";
 
-if (storedCount >= DAILY_SEARCH_LIMIT) {
-
-  showToast("Daily free search limit reached. Upgrade to continue.");
+if (!isPro && storedCount >= DAILY_SEARCH_LIMIT) {
+showToast("Daily free search limit reached. Upgrade to continue.");
   return;
 }
 
