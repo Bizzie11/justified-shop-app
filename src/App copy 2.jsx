@@ -230,17 +230,16 @@ function openUrlsInTabs(urls) {
   for (let i = urls.length - 1; i >= 0; i--) {
     try {
       const isGoogle = urls[i].name === "Google";
-      console.log("opening url:", urls[i]);
       const tab = window.open(urls[i].url, "_blank");
 
       if (tab && !isGoogle) {
         openedTabs.push(tab);
       }
-    }
-    catch (err) {
-  console.error("openUrlsInTabs failed:", err);
+    } catch {
+      // ignore errors
     }
   }
+
   return openedTabs;
 }
 
@@ -251,6 +250,7 @@ function getTodayDate() {
 }
 function openSelected(searchOverride = null) {
   const termToSearch = searchOverride ?? cleanedTerm;
+alert(`term=${termToSearch} sites=${selectedSites.length}`);
   if (!termToSearch) return showToast("Enter a search term first.");
   if (!selectedSites.length) return showToast("Choose at least one site.");
 
@@ -277,7 +277,10 @@ alert(`saved count=${localStorage.getItem("js_search_count")} date=${localStorag
     
  
 
-
+if (currentCount >= 1) {
+  setShowUpgradeModal(true);
+  return showToast("You've reached your 5 free searches for today.");
+}
   
   // Close previous tabs if "replaceOpenTabs" is enabled
   let replacedCount = 0;
@@ -785,7 +788,7 @@ function Hero() {
           </div>
         </div>
 
-        <div className="hidden rounded-[32px] border border-white/10 bg-white/5 p-4 shadow-2xl shadow-black/30 backdrop-blur">
+        <div className="rounded-[32px] border border-white/10 bg-white/5 p-4 shadow-2xl shadow-black/30 backdrop-blur">
           <div className="rounded-[28px] border border-white/10 bg-slate-950 p-5 md:p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -809,7 +812,6 @@ function Hero() {
                 Clean preset dropdown
               </div>
             </div>
-            
             <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
               {SITE_CONFIG.slice(0, 6).map((site) => (
                 <div
@@ -1073,7 +1075,7 @@ if (storedDate !== today) {
 }
 
 if (storedCount >= DAILY_SEARCH_LIMIT) {
-
+  setShowUpgradeModal(true);
   showToast("Daily free search limit reached. Upgrade to continue.");
   return;
 }
@@ -1475,7 +1477,7 @@ Search All Marketplaces
  onDoubleClick={() => {
   const trimmed = item.trim();
 
-  setSearch(trimmed);
+  setSearch(item);
 
   if (/^\d{12,14}$/.test(trimmed)) {
     setSearchType("UPC");
@@ -1485,7 +1487,7 @@ Search All Marketplaces
     setSearchType("Exact Part #");
   }
 
-  openSelected(trimmed);
+  openSelected(item);
 }}
                     className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/10 hover:border-white/20 transition cursor-pointer active:scale-[0.98]"
                   >
@@ -1529,8 +1531,7 @@ const startCheckout = async (plan) => {
     }
   } catch (error) {
     console.error("Checkout error:", error);
-  alert(error.message);
-  
+    alert("Checkout failed. Please try again.");
   }
 };
 
