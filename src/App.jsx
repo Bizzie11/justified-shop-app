@@ -907,7 +907,7 @@ const [selectedSites, setSelectedSites] = useState(() => {
 const [searchCountToday, setSearchCountToday] = useState(() => {
 return Number(localStorage.getItem("js_search_count") || "0");
 });
-
+const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 const [lastSearchDate, setLastSearchDate] = useState(() => {
   return localStorage.getItem("js_search_date") || "";
 });
@@ -1074,7 +1074,7 @@ if (storedDate !== today) {
 const isPro = localStorage.getItem("js_is_pro") === "true";
 
 if (!isPro && storedCount >= DAILY_SEARCH_LIMIT) {
-showToast("Daily free search limit reached. Upgrade to continue.");
+  setShowUpgradeModal(true);
   return;
 }
 
@@ -1174,6 +1174,12 @@ console.log("Search count:", storedCount, "Date:", storedDate, "Today:", today);
               <div>
             
                 <h3 className="text-2xl font-semibold text-white">Check products instantly</h3>
+                <div className="mt-3 mb-4 rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3">
+  <p className="text-sm font-semibold text-amber-200">Popup reminder</p>
+  <p className="mt-1 text-sm text-amber-100/80">
+    Search results open in new tabs. If nothing happens, allow popups for this site.
+  </p>
+</div>
               </div>
               <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300">
                 {selectedCount} sites selected
@@ -1218,8 +1224,10 @@ onClick={async () => {
                 >
                   {isOpening ? "Opening..." : "Open Results"}
                 </button>
+ 
               </div>
             </div>
+
 <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
   <div className="flex items-start justify-between gap-3">
     <div>
@@ -1259,9 +1267,10 @@ onClick={async () => {
     </div>
    
   </div>
-<div className="mt-4 rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
-  <p className="text-xs uppercase tracking-wide text-slate-500">Free Plan</p>
-<p className="mt-1 text-sm font-medium text-white">Account-based usage limits coming soon.</p>
+  <div className="mt-4 rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
+<p className="text-xs uppercase tracking-wide text-emerald-300">Free Plan</p>
+<p className="mt-1 text-sm font-medium text-white">5 searches per day</p>
+<p className="mt-1 text-xs text-slate-400">Upgrade to Pro for unlimited searches.</p>
 </div>
   <div className="mt-4 grid gap-3 sm:grid-cols-2">
     <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
