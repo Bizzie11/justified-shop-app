@@ -1997,6 +1997,39 @@ if (pathname === "/success") {
   );
 }
 function SuccessPage() {
+  
+
+useEffect(() => {
+  const run = async () => {
+    const params = new URLSearchParams(window.location.search);
+    const session_id = params.get("session_id");
+
+    if (!session_id) return;
+
+    try {
+      const res = await fetch("/.netlify/functions/mark-pro", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ session_id })
+      });
+
+      const data = await res.json();
+      console.log("mark-pro result:", data);
+
+      // 🔥 TEMP: unlock locally so you can see it work
+      if (data.success) {
+        localStorage.setItem("is_is_pro", "true");
+      }
+
+    } catch (err) {
+      console.error("mark-pro failed:", err);
+    }
+  };
+
+  run();
+}, []);
   return (
     <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
       <div className="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center shadow-xl">
