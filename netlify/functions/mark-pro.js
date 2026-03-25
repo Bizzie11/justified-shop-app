@@ -42,15 +42,24 @@ exports.handler = async (event) => {
 
     const email = session.customer_details.email.toLowerCase();
 
-    const { error } = await supabase.from("users").upsert(
-      {
-        email,
-        is_pro: true,
-      },
-      { onConflict: "email" }
-    );
+  const res = await fetch(`${process.env.SUPABASE_URL}/rest/v1/users`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "apikey": process.env.SUPABASE_SERVICE_ROLE_KEY,
+    "Authorization": `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+    "Prefer": "resolution=merge-duplicates"
+  },
+  body: JSON.stringify({
+    email,
+    is_pro: true
+  })
+});
 
-    if (error) throw error;
+if (!res.ok) {
+  const text = await res.text();
+  throw new Error(`Supabase error: ${text}`);
+}
 
     return {
       statusCode: 200,
