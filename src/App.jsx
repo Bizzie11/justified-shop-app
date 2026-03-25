@@ -1997,6 +1997,7 @@ if (pathname === "/success") {
   );
 }
 function SuccessPage() {
+
   useEffect(() => {
     const run = async () => {
       const params = new URLSearchParams(window.location.search);
@@ -2026,6 +2027,11 @@ function SuccessPage() {
 
     run();
   }, []);
+
+
+  
+
+
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
