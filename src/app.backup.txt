@@ -257,7 +257,7 @@ function openSelected(searchOverride = null) {
   const today = getTodayDate();
   const storedDate = localStorage.getItem("js_search_date") || "";
   const storedCount = Number(localStorage.getItem("js_search_count") || "0");
-
+const isPro = localStorage.getItem("js_is_pro") === "true";
   let currentCount = storedCount;
 
   if (storedDate !== today) {
@@ -877,7 +877,6 @@ function DashboardPreview() {
   const DAILY_SEARCH_LIMIT = 5;
   const SEARCH_COUNT_KEY = "js_search_count";
   const SEARCH_DATE_KEY = "js_search_date";
-  const isPro = window.localStorage.getItem("is_is_pro") === "true";
 
   const initialPresets = useMemo(
     () => normalizePresets(readStorage(STORAGE_KEYS.presets, DEFAULT_PRESETS)),
@@ -1067,14 +1066,16 @@ let storedCount = parseInt(localStorage.getItem(SEARCH_COUNT_KEY), 10);
 
 if (isNaN(storedCount)) storedCount = 0;
 
+let currentCount = storedCount;
+
 if (storedDate !== today) {
   localStorage.setItem(SEARCH_DATE_KEY, today);
   localStorage.setItem(SEARCH_COUNT_KEY, "0");
   storedCount = 0;
+  currentCount = 0;
 }
 
-if (!isPro && storedCount >= DAILY_SEARCH_LIMIT) {
-
+if (!isPro && currentCount >= DAILY_SEARCH_LIMIT) {
   showToast("Daily free search limit reached. Upgrade to continue.");
   return;
 }
@@ -1221,9 +1222,6 @@ onClick={async () => {
                 </button>
               </div>
             </div>
-            <p className="mt-2 text-xs text-slate-400">
-  If results do not open, disable ad blockers or allow popups.
-</p>
 <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
   <div className="flex items-start justify-between gap-3">
     <div>
@@ -1265,7 +1263,7 @@ onClick={async () => {
   </div>
 <div className="mt-4 rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
   <p className="text-xs uppercase tracking-wide text-slate-500">Free Plan</p>
-<p className="mt-1 text-sm font-medium text-white">Free plan: 5 searches included.</p>
+<p className="mt-1 text-sm font-medium text-white">Account-based usage limits coming soon.</p>
 </div>
   <div className="mt-4 grid gap-3 sm:grid-cols-2">
     <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
@@ -1501,7 +1499,7 @@ Search All Marketplaces
     </div>
 </div>
    {toast ? (
-  <div className="fixed bottom-20 right-6 z-40 rounded-2xl border border-white/20 bg-slate-900 px-5 py-4 text-base font-medium text-white shadow-xl">
+  <div className="fixed bottom-20 right-6 z-40 rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white shadow-2xl shadow-black/30">
     {toast}
   </div>
 ) : null}
@@ -1534,7 +1532,7 @@ const startCheckout = async (plan) => {
   } catch (error) {
     console.error("Checkout error:", error);
   alert(error.message);
-  
+
   }
 };
 
