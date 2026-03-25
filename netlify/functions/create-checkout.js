@@ -26,7 +26,9 @@ exports.handler = async (event) => {
       };
     }
 
-    const baseUrl = process.env.URL || "https://justifiedshop.netlify.app";
+    const baseUrl =
+  event.headers.origin ||
+  `https://${event.headers["x-forwarded-host"] || event.headers.host}`;
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
