@@ -18,6 +18,7 @@ import {
   Save,
 } from "lucide-react";
 import { supabase } from "./lib/supabaseClient";
+import LoginPreviewAuth from './LoginPreview'
 const STORAGE_KEYS = {
   presets: "justifiedshop.presets",
   selectedPresetId: "justifiedshop.selectedPresetId",
@@ -1991,7 +1992,7 @@ if (pathname === "/success") {
       <Features />
       <DashboardPreview />
       <Pricing />
-      <LoginPreview />
+    <LoginPreviewAuth />
       <Footer />
     </div>
   );
