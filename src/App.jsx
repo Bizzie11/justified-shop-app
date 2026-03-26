@@ -879,7 +879,6 @@ function DashboardPreview() {
   const SEARCH_COUNT_KEY = "js_search_count";
   const SEARCH_DATE_KEY = "js_search_date";
   const isPro = window.localStorage.getItem("is_is_pro") === "true";
-
   const initialPresets = useMemo(
     () => normalizePresets(readStorage(STORAGE_KEYS.presets, DEFAULT_PRESETS)),
     []

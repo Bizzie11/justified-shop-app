@@ -8,10 +8,11 @@ export default function LoginPreview() {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const loadProfile = async (user) => {
-  if (!user?.email) {
-    setProfile(null)
-    return
-  }
+if (!user?.email) {
+  setProfile(null)
+  window.localStorage.removeItem("is_is_pro")
+  return
+}
 
   const { data, error } = await supabase
     .from('users')
@@ -19,13 +20,15 @@ export default function LoginPreview() {
     .eq('email', user.email)
     .maybeSingle()
 
-  if (error) {
-    console.error('Profile load error:', error.message)
-    setProfile(null)
-    return
-  }
+ if (error) {
+  console.error('Profile load error:', error.message)
+  setProfile(null)
+  window.localStorage.removeItem("is_is_pro")
+  return
+}
 
   setProfile(data ?? null)
+window.localStorage.setItem("is_is_pro", data?.is_pro ? "true" : "false")
 }
 
   useEffect(() => {
@@ -98,8 +101,10 @@ export default function LoginPreview() {
       return
     }
 
-    setUser(null)
-    setMessage('Signed out.')
+   setUser(null)
+setProfile(null)
+window.localStorage.removeItem("is_is_pro")
+setMessage('Signed out.')
   }
 
    return (
