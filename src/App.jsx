@@ -2000,6 +2000,7 @@ function SuccessPage() {
 
   useEffect(() => {
     const run = async () => {
+      console.log("SuccessPage effect started");
       const params = new URLSearchParams(window.location.search);
       const session_id = params.get("session_id");
 
