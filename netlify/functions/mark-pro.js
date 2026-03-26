@@ -9,6 +9,9 @@ const supabase = createClient(
 );
 
 exports.handler = async (event) => {
+  console.log("SUPABASE_URL:", process.env.SUPABASE_URL);
+  console.log("SERVICE_ROLE_KEY exists:", !!process.env.SUPABASE_SERVICE_ROLE_KEY);
+
   try {
     if (event.httpMethod !== "POST") {
       return {
