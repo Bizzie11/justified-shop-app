@@ -371,7 +371,7 @@ function SiteCard({ name, selected, onClick, locked }) {
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-2xl border px-4 py-2 text-left transition duration-150",
+        "cursor-pointer rounded-2xl border px-4 py-2 text-left transition duration-150",
         selected
           ? "border-emerald-400/50 bg-emerald-400/10 text-white"
           : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10"
