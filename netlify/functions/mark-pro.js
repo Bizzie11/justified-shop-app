@@ -45,7 +45,7 @@ exports.handler = async (event) => {
 
     const email = session.customer_details.email.toLowerCase();
 
-  const res = await fetch(`${process.env.SUPABASE_URL}/rest/v1/users`, {
+  const res = await fetch(`${process.env.SUPABASE_URL}/rest/v1/users?on_conflict=email`, {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
