@@ -2018,7 +2018,8 @@ function SuccessPage() {
         console.log("mark-pro result:", data);
 
         if (data.success) {
-          localStorage.setItem("is_is_pro", "true");
+          localStorage.setItem("is_pro", "true");
+localStorage.setItem("is_is_pro", "true");
         }
       } catch (err) {
         console.error("mark-pro failed:", err);
