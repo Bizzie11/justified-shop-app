@@ -1597,6 +1597,18 @@ function Pricing() {
           </div>
         ))}
       </div>
+      <div className="mt-6 text-sm text-slate-300 text-center">
+  <p>
+    Questions?{" "}
+    <a
+      href="mailto:support@justifiedventuresllc.com"
+      className="text-emerald-300 hover:text-emerald-200"
+    >
+      support@justifiedventuresllc.com
+    </a>
+  </p>
+  <p className="mt-1">We respond within 1 business day.</p>
+</div>
     </section>
   );
 }
