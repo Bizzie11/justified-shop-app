@@ -757,7 +757,7 @@ function Hero() {
             Built for arbitrage sellers and wholesale sellers
           </div>
           <h1 className="mt-6 max-w-2xl text-4xl font-bold tracking-tight text-white md:text-6xl">
-            Search Once. Check Every Marketplace.
+            Search Once. Check Multiple Marketplaces.
           </h1>
           <p className="mt-6 max-w-xl text-lg font-medium leading-8 text-emerald-300">
             Search Faster. Source Smarter.
