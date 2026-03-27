@@ -118,13 +118,13 @@ setMessage('Signed out.')
         color: '#111827',
       }}
     >
-      <h2>Login Preview</h2>
+      <h2>Account Access</h2>
 
       {!user ? (
         <form onSubmit={handleMagicLink}>
           <input
             type="email"
-            placeholder="Enter your email"
+            placeholder="Enter your email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -138,7 +138,7 @@ setMessage('Signed out.')
           />
           <br />
           <button type="submit" disabled={loading}>
-            {loading ? 'Sending...' : 'Send Magic Link'}
+            {loading ? 'Sending...' : 'Email Me a Sign-In Link'}
           </button>
         </form>
       ) : (
