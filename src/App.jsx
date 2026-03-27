@@ -848,7 +848,7 @@ function Features() {
     },
     {
       title: "Made by an actual seller",
-      text: "Built from a real e-commerce workflow by someone who understands wholesale, marketplaces, and daily sourcing pain.",
+      text: "Built from a real e-commerce workflow by someone with 21 years in wholesale distribution, who understands marketplaces and daily sourcing challenges.",
     },
   ];
 
