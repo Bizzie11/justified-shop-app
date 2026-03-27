@@ -839,7 +839,7 @@ function Hero() {
 function Features() {
   const items = [
     {
-      title: "Search once, check everywhere",
+      title: "Search once, check multiple marketplaces",
       text: "Enter a product name, model number, or UPC and instantly open results across the marketplaces sellers already use every day.",
     },
     {
