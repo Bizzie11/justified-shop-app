@@ -143,11 +143,11 @@ setMessage('Signed out.')
         </form>
       ) : (
         <div>
-          <p><strong>Logged in</strong></p>
-          <p>Email: {user.email}</p>
-          <p>User ID: {user.id}</p>
-          <p>Profile found: {profile ? 'yes' : 'no'}</p>
-<p>is_pro: {profile ? String(profile.is_pro) : 'not found'}</p>
+          <p><strong>Signed in</strong></p>
+          <p><strong>Email</strong>: {user.email}</p>
+          <p><strong>Account ID</strong>: {user.id}</p>
+          <p><strong>Status</strong>: {profileFound ? 'Active' : 'Setting up...'}</p>
+<p><strong>Plan</strong>: {profile && profile.is_pro ? 'Pro' : 'Free'}</p>
           <button onClick={handleSignOut}>Sign Out</button>
         </div>
       )}
