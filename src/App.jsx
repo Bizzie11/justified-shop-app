@@ -1165,7 +1165,7 @@ console.log("Search count:", storedCount, "Date:", storedDate, "Today:", today);
       <div className="mx-auto max-w-7xl px-6 py-20 md:px-10">
         <SectionTitle
           eyebrow="Main dashboard"
-          title="Search once. Check every marketplace instantly."
+          title="Search Once. Check Multiple Marketplaces."
           text="Enter a product name, model number, or UPC and instantly open results across every marketplace you select."
         />
 
