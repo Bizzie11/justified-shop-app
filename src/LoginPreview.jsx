@@ -100,14 +100,16 @@ window.localStorage.setItem("is_is_pro", data?.is_pro ? "true" : "false")
       console.error('Sign out error:', error.message)
       return
     }
+    localStorage.removeItem("is_is_pro")
+localStorage.removeItem("is_pro")
 
-   setUser(null)
+  setUser(null)
 setProfile(null)
-window.localStorage.removeItem("is_is_pro")
 setMessage('Signed out.')
+window.location.reload()
   }
 
-   return (
+  return (
     <div
       style={{
         border: '1px solid #ddd',
