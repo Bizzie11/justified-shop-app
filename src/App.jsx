@@ -1431,10 +1431,10 @@ Search All Marketplaces
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-400">
-                    {showingExampleSearches ? "Example searches" : "Recent searches"}
+                    "Search suggestions"
                   </p>
                   <h3 className="text-xl font-semibold text-white">
-                    {showingExampleSearches ? "Try one of these" : "Jump back in"}
+                    Suggested searches
                   </h3>
                 </div>
               </div>
