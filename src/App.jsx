@@ -1431,7 +1431,7 @@ Search All Marketplaces
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-400">
-                    "Search suggestions"
+                    Search suggestions
                   </p>
                   <h3 className="text-xl font-semibold text-white">
                     Suggested searches
