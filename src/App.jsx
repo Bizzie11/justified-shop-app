@@ -1327,6 +1327,11 @@ onClick={async () => {
                   <p className="text-sm text-slate-400">
                     Automatically close the last batch of search tabs before opening a new one.
                   </p>
+                  
+  <p className="mt-2 text-xs text-slate-500">
+  Some sites, especially Google, may stay open because of browser security rules.
+</p>
+
                 </div>
                 <label className="inline-flex items-center gap-3 text-sm text-slate-300">
                   <button
