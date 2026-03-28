@@ -96,7 +96,11 @@ const DEFAULT_PRESETS = [
   },
 ];
 
-const DEFAULT_RECENT = []
+const DEFAULT_RECENT = [  
+  "Klein 11-in-1 screwdriver",
+  "Shark Navigator filter",
+  "Weber grill cover",
+  "Rubbermaid storage tote",]
 ;
 
 const pricing = [
@@ -1431,10 +1435,10 @@ Search All Marketplaces
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-400">
-                    Search suggestions
+                    Example searches
                   </p>
                   <h3 className="text-xl font-semibold text-white">
-                    Suggested searches
+                    Try one of these
                   </h3>
                 </div>
               </div>
