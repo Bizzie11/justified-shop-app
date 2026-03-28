@@ -1722,7 +1722,7 @@ function UpgradeModal({ onClose }) {
               </p>
 <button
   onClick={() => startCheckout("pro-monthly")}
-  className="mt-5 w-full rounded-2xl bg-emerald-400 px-5 py-3.5 font-semibold text-slate-950"
+  className="mt-5 w-full rounded-2xl bg-emerald-500 hover:bg-emerald-400 px-5 py-3.5 font-semibold text-black transition"
 >
   Start Pro
 </button>
