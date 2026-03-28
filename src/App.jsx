@@ -1583,14 +1583,14 @@ function Pricing() {
     if (tier.name === "Pro") startCheckout("pro-monthly")
     else if (tier.name === "Annual Plan") startCheckout("annual")
   }}
-  className={cn(
+  
+>
+  {tier.cta}className={cn(
     "mt-6 w-full rounded-2xl px-4 py-3 font-semibold",
-    tier.featured
+    tier.name === "Pro" || tier.featured
       ? "bg-emerald-400 text-slate-950"
       : "border border-white/10 bg-white/5 text-white"
   )}
->
-  {tier.cta}
 </button>
           </div>
         ))}
