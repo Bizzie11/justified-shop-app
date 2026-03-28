@@ -96,12 +96,8 @@ const DEFAULT_PRESETS = [
   },
 ];
 
-const DEFAULT_RECENT = [
-  "Klein 11-in-1 screwdriver",
-  "Shark Navigator filter",
-  "Weber grill cover",
-  "Rubbermaid storage tote",
-];
+const DEFAULT_RECENT = []
+;
 
 const pricing = [
   {
