@@ -112,13 +112,13 @@ window.location.reload()
   return (
     <div
       style={{
-        border: '1px solid #ddd',
-        padding: '16px',
-        borderRadius: '12px',
-        margin: '24px 0',
-        background: '#ffffff',
-        color: '#111827',
-      }}
+  border: '1px solid rgba(255,255,255,0.10)',
+  padding: '16px',
+  borderRadius: '24px',
+  margin: '24px 0',
+  background: 'rgba(2, 6, 23, 0.75)',
+  color: '#e5e7eb',
+}}
     >
       <h2>Account Access</h2>
 
