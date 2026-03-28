@@ -1744,7 +1744,7 @@ function UpgradeModal({ onClose }) {
               </p>
               <button
   onClick={() => startCheckout("annual")}
-  className="mt-5 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 font-semibold text-white"
+  classNamclassName="mt-5 w-full rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-3.5 font-semibold transition"
 >
   Choose Annual Plan
 </button>
