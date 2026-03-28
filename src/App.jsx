@@ -1584,11 +1584,13 @@ function Pricing() {
     else if (tier.name === "Annual Plan") startCheckout("annual")
   }}
   className={cn(
-    "mt-6 w-full rounded-2xl px-4 py-3 font-semibold transition",
-    tier.name === "Pro" || tier.featured
-      ? "bg-emerald-400 text-slate-950 hover:bg-emerald-300"
-      : "border border-white/10 bg-white/5 text-white hover:bg-white/10"
-  )}
+  "mt-6 w-full rounded-2xl px-4 py-3 font-semibold transition",
+  tier.name === "Pro" || tier.featured
+    ? tier.name === "Pro"
+      ? "bg-emerald-500/90 text-slate-950 hover:bg-emerald-400"
+      : "bg-emerald-400 text-slate-950 hover:bg-emerald-300"
+    : "border border-white/10 bg-white/5 text-white hover:bg-white/10"
+)}
 >
   {tier.cta}
 </button>
