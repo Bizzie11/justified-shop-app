@@ -1462,7 +1462,7 @@ Search All Marketplaces
               <p className="mt-3 text-sm text-slate-400">
                 {showingExampleSearches
                   ? "Use a starter search to see how Justified Shop works."
-                  : "Your latest searches stay saved in this browser for quick repeat checks."}
+                  : "Searches you run here stay saved in this browser for quick repeat checks."}
               </p>
 <p className="text-xs text-slate-500 mb-2">
   Click to load • Double-click to search
